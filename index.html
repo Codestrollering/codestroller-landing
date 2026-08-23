@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codestroller — AI QA that actually browses your site</title>
+<meta name="description" content="Codestroller runs persona-driven AI agents that browse your website like real users and report the bugs they find.">
+<style>
+  :root {
+    --md-primary: #4F5BD5;
+    --md-primary-container: #E1E0FF;
+    --md-on-primary-container: #050764;
+    --md-secondary: #5B5D72;
+    --md-surface: #FFFBFF;
+    --md-surface-variant: #E4E1EC;
+    --md-on-surface: #1B1B1F;
+    --md-on-surface-variant: #46464F;
+    --md-outline: #767680;
+    --md-error: #BA1A1A;
+    --md-success: #146C2E;
+    --radius-lg: 28px;
+    --radius-md: 16px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Roboto Flex', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--md-surface);
+    color: var(--md-on-surface);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* Nav */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,251,255,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--md-surface-variant);
+  }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; max-width: 1120px; margin: 0 auto; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; letter-spacing: -0.02em; }
+  .logo-mark {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(135deg, #4F5BD5, #8B5CF6);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 15px;
+  }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--md-on-surface-variant); font-size: 15px; font-weight: 500; transition: color .15s; }
+  .nav-links a:hover { color: var(--md-on-surface); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 24px; border-radius: 100px; font-weight: 600; font-size: 14px;
+    text-decoration: none; border: none; cursor: pointer; transition: all .2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-filled { background: var(--md-primary); color: white; }
+  .btn-filled:hover { background: #3E49C4; box-shadow: 0 4px 14px rgba(79,91,213,0.35); }
+  .btn-outline { background: transparent; color: var(--md-primary); border: 1px solid var(--md-outline); }
+  .btn-outline:hover { background: var(--md-primary-container); border-color: var(--md-primary); }
+  .btn-lg { padding: 14px 32px; font-size: 16px; }
+
+  /* Hero */
+  .hero { padding: 96px 0 80px; }
+  .hero-inner { max-width: 780px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--md-primary-container); color: var(--md-on-primary-container);
+    padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--md-success); }
+  h1 {
+    font-size: clamp(36px, 5.5vw, 58px); font-weight: 700; letter-spacing: -0.03em;
+    line-height: 1.06; margin-bottom: 24px; color: var(--md-on-surface);
+  }
+  h1 .accent { color: var(--md-primary); }
+  .hero-sub { font-size: 19px; color: var(--md-on-surface-variant); max-width: 600px; margin-bottom: 36px; line-height: 1.6; }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+  .hero-note { font-size: 13px; color: var(--md-on-surface-variant); }
+
+  /* Terminal mock */
+  .mock {
+    background: #1B1B1F; border-radius: var(--radius-lg); padding: 28px;
+    font-family: 'SF Mono', 'Roboto Mono', monospace; font-size: 13.5px;
+    max-width: 640px; box-shadow: 0 24px 60px rgba(27,27,31,0.18);
+    border: 1px solid #2E2E33;
+  }
+  .mock-dots { display: flex; gap: 6px; margin-bottom: 20px; }
+  .mock-dots span { width: 10px; height: 10px; border-radius: 50%; background: #3A3A40; }
+  .mock-line { color: #B8B8C0; margin-bottom: 10px; display: flex; gap: 10px; }
+  .mock-line .tag { color: #8B93FF; flex-shrink: 0; }
+  .mock-line .ok { color: #6FDB8F; }
+  .mock-line .warn { color: #FFB84D; }
+  .mock-line .err { color: #FF6B6B; }
+
+  /* Sections */
+  section { padding: 72px 0; }
+  .section-label { color: var(--md-primary); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+  .section-title { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; max-width: 640px; }
+  .section-sub { font-size: 17px; color: var(--md-on-surface-variant); max-width: 560px; margin-bottom: 56px; }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feature-card {
+    background: var(--md-surface); border: 1px solid var(--md-surface-variant);
+    border-radius: var(--radius-md); padding: 28px; transition: border-color .2s, transform .2s;
+  }
+  .feature-card:hover { border-color: var(--md-primary); transform: translateY(-2px); }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 12px; background: var(--md-primary-container);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 18px; font-size: 20px;
+  }
+  .feature-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .feature-card p { font-size: 14.5px; color: var(--md-on-surface-variant); line-height: 1.6; }
+
+  /* How it works */
+  .how-list { display: flex; flex-direction: column; gap: 0; max-width: 720px; }
+  .how-step { display: flex; gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--md-surface-variant); }
+  .how-step:last-child { border-bottom: none; }
+  .how-num {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--md-on-surface); color: white;
+    display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px;
+    flex-shrink: 0;
+  }
+  .how-step h4 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .how-step p { color: var(--md-on-surface-variant); font-size: 15px; }
+
+  /* Pricing */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .price-card {
+    border: 1px solid var(--md-surface-variant); border-radius: var(--radius-lg); padding: 32px;
+    display: flex; flex-direction: column;
+  }
+  .price-card.featured { border: 2px solid var(--md-primary); position: relative; background: linear-gradient(180deg, var(--md-primary-container) 0%, transparent 140px); }
+  .price-badge {
+    position: absolute; top: -12px; left: 32px; background: var(--md-primary); color: white;
+    font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 100px;
+  }
+  .price-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  .price-card .price { font-size: 36px; font-weight: 700; margin: 12px 0 4px; letter-spacing: -0.02em; }
+  .price-card .price span { font-size: 15px; font-weight: 400; color: var(--md-on-surface-variant); }
+  .price-card .price-desc { font-size: 13.5px; color: var(--md-on-surface-variant); margin-bottom: 24px; }
+  .price-list { list-style: none; margin-bottom: 28px; flex-grow: 1; }
+  .price-list li { font-size: 14.5px; padding: 7px 0; color: var(--md-on-surface-variant); display: flex; gap: 10px; }
+  .price-list li::before { content: "✓"; color: var(--md-success); font-weight: 700; flex-shrink: 0; }
+
+  /* CTA band */
+  .cta-band {
+    background: var(--md-on-surface); border-radius: var(--radius-lg); padding: 64px 48px;
+    text-align: center; color: white; margin: 0 auto;
+  }
+  .cta-band h2 { font-size: clamp(26px, 3.6vw, 36px); margin-bottom: 16px; letter-spacing: -0.02em; }
+  .cta-band p { color: rgba(255,255,255,0.7); font-size: 16px; margin-bottom: 32px; }
+
+  footer { border-top: 1px solid var(--md-surface-variant); padding: 40px 0; }
+  .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .footer-copy { font-size: 13.5px; color: var(--md-on-surface-variant); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 13.5px; color: var(--md-on-surface-variant); text-decoration: none; }
+  .footer-links a:hover { color: var(--md-on-surface); }
+
+  @media (max-width: 860px) {
+    .feature-grid, .pricing-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .cta-band { padding: 48px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-mark">C</div>
+      Codestroller
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <a href="https://app.codestroller.com" class="btn btn-filled">Sign in</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="eyebrow"><span class="dot"></span> Now testing production sites 24/7</div>
+        <h1>QA agents that <span class="accent">browse your site</span> like real people —<br>and tell you what's broken.</h1>
+        <p class="hero-sub">Codestroller runs persona-driven AI agents against your live site, clicks through real user journeys, and files clear, reproducible bug reports before your customers find the problems first.</p>
+        <div class="hero-ctas">
+          <a href="https://app.codestroller.com" class="btn btn-filled btn-lg">Start free QA run</a>
+          <a href="#how" class="btn btn-outline btn-lg">See how it works</a>
+        </div>
+        <div class="hero-note">No credit card required · First run in under 5 minutes</div>
+      </div>
+
+      <div style="margin-top: 56px;">
+        <div class="mock">
+          <div class="mock-dots"><span></span><span></span><span></span></div>
+          <div class="mock-line"><span class="tag">[persona]</span> first-time-visitor browsing plantacopia.com</div>
+          <div class="mock-line"><span class="tag">[action]</span> clicked "Browse Plants" → search modal opened</div>
+          <div class="mock-line ok">[pass] plant grid rendered, 584 entries loaded</div>
+          <div class="mock-line"><span class="tag">[action]</span> navigated to /plant/echinacea-purpurea</div>
+          <div class="mock-line err">[bug] renderPlants() no-op — container #plant-list missing from DOM</div>
+          <div class="mock-line warn">[report] filed as PR-ready fix on fix/restore-plant-database-ui</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-label">Why Codestroller</div>
+      <h2 class="section-title">Bug reports that read like a human found them — because one basically did.</h2>
+      <p class="section-sub">Traditional QA tools check if elements exist. Codestroller's agents actually use your product the way your users do, so they catch the failures that only show up in real usage.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🧭</div>
+          <h3>Persona-driven browsing</h3>
+          <p>Agents adopt real user personas — first-time visitor, power user, mobile shopper — and navigate accordingly, surfacing issues generic crawlers miss.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🐛</div>
+          <h3>Reproducible bug reports</h3>
+          <p>Every finding ships with the exact steps, DOM state, and screenshots needed to reproduce it — no back-and-forth guessing what broke.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔁</div>
+          <h3>Continuous, not one-off</h3>
+          <p>Schedule recurring runs so regressions get caught the moment they ship, not weeks later in a support ticket.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>Deploy-aware</h3>
+          <p>Connects to your hosting and repo so reports can point straight at the commit or route responsible.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Trend tracking</h3>
+          <p>See which parts of your product accumulate bugs over time, not just what's broken right now.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Fast to set up</h3>
+          <p>Point Codestroller at a URL and a goal. No test scripts to write, no selectors to maintain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="background: var(--md-surface-variant);">
+    <div class="container">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">From URL to bug report in three steps.</h2>
+
+      <div class="how-list">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div>
+            <h4>Point it at your site</h4>
+            <p>Give Codestroller a URL and describe the user journeys that matter — checkout, sign-up, search, whatever's core to your product.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div>
+            <h4>Agents browse for real</h4>
+            <p>Persona-driven agents click, scroll, type, and navigate your site the way an actual visitor would, in a real browser session.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div>
+            <h4>Get a clear report</h4>
+            <p>Every bug is logged with reproduction steps, screenshots, and context — ready to hand to a developer or fix yourself.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Start free. Scale when you need to.</h2>
+      <p class="section-sub">Every plan includes full persona customization and reproducible bug reports.</p>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h3>Starter</h3>
+          <div class="price">$0<span>/mo</span></div>
+          <div class="price-desc">For trying Codestroller on a single site</div>
+          <ul class="price-list">
+            <li>1 site</li>
+            <li>5 QA runs / month</li>
+            <li>2 personas</li>
+            <li>Email reports</li>
+          </ul>
+          <a href="https://app.codestroller.com" class="btn btn-outline">Get started</a>
+        </div>
+        <div class="price-card featured">
+          <div class="price-badge">Most popular</div>
+          <h3>Pro</h3>
+          <div class="price">$49<span>/mo</span></div>
+          <div class="price-desc">For teams shipping regularly</div>
+          <ul class="price-list">
+            <li>5 sites</li>
+            <li>Unlimited QA runs</li>
+            <li>Unlimited personas</li>
+            <li>Scheduled recurring runs</li>
+            <li>Repo + deploy integration</li>
+          </ul>
+          <a href="https://app.codestroller.com" class="btn btn-filled">Start free trial</a>
+        </div>
+        <div class="price-card">
+          <h3>Team</h3>
+          <div class="price">Custom</div>
+          <div class="price-desc">For larger orgs and multiple products</div>
+          <ul class="price-list">
+            <li>Unlimited sites</li>
+            <li>SSO</li>
+            <li>Priority support</li>
+            <li>Custom persona libraries</li>
+          </ul>
+          <a href="mailto:hello@codestroller.com" class="btn btn-outline">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="cta-band">
+        <h2>Find out what your users would find first.</h2>
+        <p>Run your first Codestroller QA pass free — no setup scripts, no credit card.</p>
+        <a href="https://app.codestroller.com" class="btn btn-filled btn-lg">Start free QA run</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-row">
+      <div class="footer-copy">© 2026 Noel Wiggins. All rights reserved.</div>
+      <div class="footer-links">
+        <a href="https://app.codestroller.com">App</a>
+        <a href="mailto:hello@codestroller.com">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
