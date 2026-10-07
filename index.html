@@ -294,8 +294,19 @@
       <p class="section-sub">We pointed Codestroller at this exact landing page and let it browse like a skeptical first-time visitor. Here's what it actually found — unedited.</p>
 
       <div style="background: var(--md-on-surface); border-radius: var(--radius-lg); padding: 32px; color: white; max-width: 780px;">
-        <div style="font-size: 12.5px; color: rgba(255,255,255,0.5); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em;">Persona</div>
-        <div style="font-size: 15px; margin-bottom: 20px; color: rgba(255,255,255,0.9);">A skeptical developer evaluating whether this QA tool actually works before trusting it with real sites</div>
+        <div style="display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
+          <div style="flex: 1 1 320px;">
+            <div style="font-size: 12.5px; color: rgba(255,255,255,0.5); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em;">Persona</div>
+            <div style="font-size: 15px; color: rgba(255,255,255,0.9);">A skeptical developer evaluating whether this QA tool actually works before trusting it with real sites</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="text-align: right;">
+              <div style="font-size: 12.5px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em;">Journey grade</div>
+              <div style="font-size: 13px; color: rgba(255,255,255,0.75); max-width: 220px;">Goal only reached by working around the site</div>
+            </div>
+            <div aria-label="Journey grade D" style="width: 56px; height: 56px; border-radius: 14px; background: rgba(255,107,107,0.15); border: 1px solid rgba(255,107,107,0.45); color: #FF6B6B; font-size: 30px; font-weight: 700; display: flex; align-items: center; justify-content: center;">D</div>
+          </div>
+        </div>
 
         <div style="font-size: 12.5px; color: rgba(255,255,255,0.5); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em;">What it did</div>
         <div style="font-family: 'SF Mono', 'Roboto Mono', monospace; font-size: 13.5px; line-height: 1.8; color: rgba(255,255,255,0.75); margin-bottom: 20px;">
@@ -313,7 +324,7 @@
       </div>
 
       <p style="font-size: 13.5px; color: var(--md-on-surface-variant); margin-top: 20px; max-width: 780px;">
-        We took that feedback and built this section. That's the whole idea — Codestroller finds the gaps, and you decide what to fix.
+        We took that feedback and built this section. That's the whole idea — Codestroller finds the gaps, and you decide what to fix. Every report now grades each persona journey from A to F: A means the persona reached its goal easily, F means it was blocked. This run predates grading, so its D was scored afterwards using the same rubric.
       </p>
     </div>
   </section>
