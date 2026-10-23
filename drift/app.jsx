@@ -172,16 +172,22 @@ const readIntroSeen = () => { try { return localStorage.getItem(INTRO_KEY) === '
 const writeIntroSeen = () => { try { localStorage.setItem(INTRO_KEY, '1'); } catch (e) { /* storage unavailable */ } };
 
 export default function App() {
-  const [screen, setScreen] = useState(() => (readIntroSeen() ? 'courant' : 'intro'));
+  const [screen, setScreenRaw] = useState(() => (readIntroSeen() ? 'courant' : 'intro'));
   const [introStep, setIntroStep] = useState(0);
   const [spotIndex, setSpotIndex] = useState(0);
   const [raining, setRaining] = useState(false);
   const [reason, setReason] = useState(null); // 'rain' | 'closed' | 'less'
   const [pocketTarget, setPocketTarget] = useState('spot'); // 'spot' | 'shelter'
   const [held, setHeld] = useState({});
+  const [chromeHidden, setChromeHidden] = useState(false);
 
   const spot = SPOTS[spotIndex];
 
+  // Every screen change brings the bottom bar back
+  const setScreenAndShow = (id) => { setChromeHidden(false); setScreenRaw(id); };
+  const toggleChrome = () => setChromeHidden((h) => !h);
+  const onScrollChrome = useScrollHide(setChromeHidden);
+  const setScreen = setScreenAndShow;
   const go = (id) => {
     if (id === 'intro') setIntroStep(0);
     if (id === 'reroute') setReason(raining ? 'rain' : null);
@@ -227,6 +233,10 @@ export default function App() {
               <span>Simuler la pluie / Rain</span>
               <span className="pill" />
             </button>
+            <button className="toggle" aria-pressed={chromeHidden} onClick={toggleChrome} disabled={!showNav}>
+              <span>Masquer / Hide nav</span>
+              <span className="pill" />
+            </button>
           </div>
         </div>
       </aside>
@@ -244,6 +254,7 @@ export default function App() {
               onPick={setSpotIndex}
               onOpen={() => setScreen('dossier')}
               onRainReroute={() => { setReason('rain'); setScreen('reroute'); }}
+              chromeHidden={chromeHidden} onToggleChrome={toggleChrome}
             />
           )}
           {screen === 'reroute' && (
@@ -252,6 +263,7 @@ export default function App() {
               onBack={() => setScreen('courant')}
               onPick={pickSpot}
               onShelter={() => { setPocketTarget('shelter'); setScreen('poche'); }}
+              onScroll={onScrollChrome}
             />
           )}
           {screen === 'dossier' && (
@@ -259,20 +271,21 @@ export default function App() {
               spot={spot}
               onBack={() => setScreen('courant')}
               onGuide={() => { setPocketTarget('spot'); setScreen('poche'); }}
+              onScroll={onScrollChrome}
             />
           )}
           {screen === 'cahier' && (
-            <Cahier held={held} onToggle={(id) => setHeld({ ...held, [id]: !held[id] })} />
+            <Cahier held={held} onToggle={(id) => setHeld({ ...held, [id]: !held[id] })} onScroll={onScrollChrome} />
           )}
           {screen === 'lens' && (
-            <Lens spot={spot} onClose={() => setScreen('courant')} />
+            <Lens spot={spot} onClose={() => setScreen('courant')} chromeHidden={chromeHidden} onToggleChrome={toggleChrome} />
           )}
           {screen === 'poche' && (
             <Pocket spot={spot} target={pocketTarget} raining={raining} onWake={() => setScreen('courant')} />
           )}
 
           {showActions && (
-            <div className="actions">
+            <div className={`actions ${chromeHidden ? 'hidden' : ''}`} aria-hidden={chromeHidden} inert={chromeHidden ? '' : undefined}>
               <button
                 className={`act reroute ${raining ? 'alert' : ''}`}
                 onClick={() => go('reroute')}
@@ -286,11 +299,18 @@ export default function App() {
           )}
 
           {showNav && (
-            <nav className="nav" aria-label="Drift">
+            <nav className={`nav ${chromeHidden ? 'hidden' : ''}`} aria-label="Drift" aria-hidden={chromeHidden} inert={chromeHidden ? '' : undefined}>
               <NavButton current={['courant', 'dossier', 'reroute'].includes(screen)} onClick={() => setScreen('courant')} fr="Courant" en="Drift" icon={<CompassIcon />} />
               <NavButton current={screen === 'cahier'} onClick={() => setScreen('cahier')} fr="Cahier" en="Register" icon={<BookIcon />} />
               <NavButton current={false} onClick={() => go('poche')} fr="Poche" en="Pocket" icon={<PocketIcon />} />
             </nav>
+          )}
+
+          {showNav && chromeHidden && (
+            <button className="chrome-handle" onClick={() => setChromeHidden(false)} aria-label="Show the menu">
+              <i />
+              <span>Menu</span>
+            </button>
           )}
         </div>
       </section>
@@ -301,6 +321,22 @@ export default function App() {
 // ==========================================
 // SHARED PIECES
 // ==========================================
+// Scrolling down hides the bottom bar; scrolling up (or reaching the top) brings it back
+function useScrollHide(setHidden) {
+  const last = useRef(0);
+  return (e) => {
+    const y = e.currentTarget.scrollTop;
+    const dy = y - last.current;
+    if (y < 24) setHidden(false);
+    else if (dy > 6) setHidden(true);
+    else if (dy < -6) setHidden(false);
+    last.current = y;
+  };
+}
+
+// A tap on open space (not on a card, button or link) toggles the bottom bar
+const isOpenSpace = (target) => !target.closest('button, a, .card, .intel');
+
 function Photo({ src, tone, alt }) {
   const [failed, setFailed] = useState(false);
   return (
@@ -353,7 +389,7 @@ const INTRO_STEPS = [
   {
     eyebrow: '01 · Courant / The drift',
     title: 'Walk to what’s near.',
-    lede: 'Swipe between places, or tap their names under the card. Open a card for the full file, then tap Guide me and put your phone away. The next turn waits on your lock screen.',
+    lede: 'Swipe between places, or tap their names under the card. Open a card for the full file, then tap Guide me and put your phone away. The next turn waits on your lock screen. Tap the photo to hide the menu bar, and tap again to bring it back.',
     fr: 'Glissez, choisissez, marchez.',
     art: 'walk'
   },
@@ -492,11 +528,12 @@ function LensArt() {
 // ==========================================
 // 01 · COURANT (THE DRIFT)
 // ==========================================
-function Courant({ spot, spotIndex, raining, onPick, onOpen, onRainReroute }) {
+function Courant({ spot, spotIndex, raining, onPick, onOpen, onRainReroute, chromeHidden, onToggleChrome }) {
   const startX = useRef(null);
   return (
     <div
       className="screen dark"
+      onClick={(e) => { if (isOpenSpace(e.target)) onToggleChrome(); }}
       onTouchStart={(e) => { startX.current = e.touches[0].clientX; }}
       onTouchEnd={(e) => {
         if (startX.current == null) return;
@@ -524,7 +561,7 @@ function Courant({ spot, spotIndex, raining, onPick, onOpen, onRainReroute }) {
         <Cut tag={`${spot.arr} · ${spot.dist}m`} name={spot.name} />
       </div>
 
-      <div className="card">
+      <div className={`card ${chromeHidden ? 'low' : ''}`}>
         <div className="card-row">
           <span>{spot.address}</span>
           <span>{spot.dist}m</span>
@@ -546,7 +583,7 @@ function Courant({ spot, spotIndex, raining, onPick, onOpen, onRainReroute }) {
 // ==========================================
 // 02 · BIFURQUER (REROUTE)
 // ==========================================
-function Reroute({ spotIndex, raining, reason, setReason, onBack, onPick, onShelter }) {
+function Reroute({ spotIndex, raining, reason, setReason, onBack, onPick, onShelter, onScroll }) {
   const nextIndex = (spotIndex + 1) % SPOTS.length;
   const nearestIndex = SPOTS
     .map((s, i) => ({ i, d: s.dist }))
@@ -556,7 +593,7 @@ function Reroute({ spotIndex, raining, reason, setReason, onBack, onPick, onShel
   return (
     <div className="screen paper">
       <Status label="Reroute" />
-      <div className="scroll">
+      <div className="scroll" onScroll={onScroll}>
         <div className="page-pad">
           <button className="back" onClick={onBack}>← Retour / Back</button>
           <div className="eyebrow">Bifurquer · Reroute</div>
@@ -630,10 +667,10 @@ function AltSpot({ spot, why, onGo }) {
 // ==========================================
 // 03 · DOSSIER (PLACE FILE)
 // ==========================================
-function Dossier({ spot, onBack, onGuide }) {
+function Dossier({ spot, onBack, onGuide, onScroll }) {
   return (
     <div className="screen paper">
-      <div className="scroll">
+      <div className="scroll" onScroll={onScroll}>
         <div className="hero">
           <Photo src={spot.image} tone={spot.tone} alt={spot.name} />
           <Status label="Dossier" onPhoto />
@@ -666,11 +703,11 @@ function Dossier({ spot, onBack, onGuide }) {
 // ==========================================
 // 04 · LE CAHIER (THE REGISTER)
 // ==========================================
-function Cahier({ held, onToggle }) {
+function Cahier({ held, onToggle, onScroll }) {
   return (
     <div className="screen paper">
       <Status label="Cahier" />
-      <div className="scroll">
+      <div className="scroll" onScroll={onScroll}>
         <div className="page-pad">
           <div className="eyebrow">Le Cahier · The Register</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12 }}>
@@ -705,9 +742,9 @@ function Cahier({ held, onToggle }) {
 // ==========================================
 // 05 · L'ŒIL (LENS)
 // ==========================================
-function Lens({ spot, onClose }) {
+function Lens({ spot, onClose, chromeHidden, onToggleChrome }) {
   return (
-    <div className="screen dark">
+    <div className="screen dark" onClick={(e) => { if (isOpenSpace(e.target)) onToggleChrome(); }}>
       <Photo src={spot.image} tone={spot.tone} alt={`Camera view at ${spot.name}`} />
       <div className="lens-shade" />
       <div className="lens-top">
@@ -727,7 +764,7 @@ function Lens({ spot, onClose }) {
       </div>
       <div className="lens-hint">Hold steady over a menu, tag or label.</div>
 
-      <div className="intel">
+      <div className={`intel ${chromeHidden ? 'low' : ''}`}>
         <div className="eyebrow">{spot.lens.intel}</div>
         <div className="name">{spot.name} · {spot.address}</div>
         <p>{spot.details}</p>

@@ -55,6 +55,7 @@ img { max-width: 100%; }
 .toggle .pill { width: 34px; height: 18px; border: 1px solid #4a463f; position: relative; }
 .toggle .pill::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: var(--mist); transition: transform 0.2s; }
 .toggle[aria-pressed="true"] { color: var(--paper); }
+.toggle:disabled { opacity: 0.35; cursor: default; }
 .toggle[aria-pressed="true"] .pill { border-color: #7fa8c4; }
 .toggle[aria-pressed="true"] .pill::after { transform: translateX(16px); background: #7fa8c4; }
 
@@ -94,7 +95,7 @@ img { max-width: 100%; }
 .status .wx { border: 1px solid currentColor; padding: 3px 7px; letter-spacing: 0.08em; opacity: 0.85; }
 .status.on-photo { color: var(--paper); text-shadow: 0 1px 6px rgba(0,0,0,0.5); }
 .status.on-photo .wx { background: rgba(12, 11, 10, 0.55); text-shadow: none; }
-.status.on-paper { color: var(--ink); }
+.status.on-paper { color: var(--ink); background: var(--paper); padding-bottom: 10px; }
 
 /* Photo with a tinted fallback so a blocked image still reads as a deliberate plate */
 .photo { position: absolute; inset: 0; background: var(--tone, #3a342c); overflow: hidden; }
@@ -119,6 +120,16 @@ img { max-width: 100%; }
 .act.reroute.alert { background: var(--rain); color: #fff; border-color: var(--rain); }
 
 .nav { position: absolute; left: 0; right: 0; bottom: 0; z-index: 40; height: 72px; background: #121110; border-top: 2px solid var(--paper); display: grid; grid-template-columns: repeat(3, 1fr); padding: 0 14px 10px; }
+.actions, .nav { transition: transform 0.3s ease, opacity 0.3s ease; }
+.actions.hidden { transform: translateY(160px); opacity: 0; pointer-events: none; }
+.nav.hidden { transform: translateY(100%); opacity: 0; pointer-events: none; }
+.chrome-handle {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 45;
+  display: grid; justify-items: center; gap: 5px; padding: 8px 18px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper);
+  background: rgba(12, 11, 10, 0.6); text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+.chrome-handle i { width: 44px; height: 4px; border-radius: 4px; background: var(--paper); }
 .nav button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #77716a; border-bottom: 2px solid transparent; }
 .nav button svg { width: 18px; height: 18px; }
 .nav button .fr { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; }
@@ -140,7 +151,9 @@ img { max-width: 100%; }
 .card {
   position: absolute; left: 14px; right: 14px; bottom: 148px; z-index: 20;
   background: var(--paper); color: var(--ink); padding: 16px 18px 0; box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  transition: bottom 0.3s ease;
 }
+.card.low { bottom: 62px; }
 .card-row { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
 .quote { font-family: var(--serif); font-style: italic; font-size: 17px; line-height: 1.38; margin: 10px 0 8px; }
 .en-copy { font-size: 13px; line-height: 1.45; color: var(--muted); margin: 0; }
@@ -232,7 +245,8 @@ img { max-width: 100%; }
 .reticle .fr { font-family: var(--serif); font-size: 20px; line-height: 1.2; }
 .reticle .tr-en { display: inline-block; margin-top: 5px; background: var(--paper); color: var(--ink); font-size: 12px; padding: 2px 7px; }
 .lens-hint { position: absolute; left: 0; right: 0; top: calc(40% + 112px); text-align: center; font-family: var(--serif); font-style: italic; font-size: 15px; color: #e8e1d5; z-index: 10; text-shadow: 0 1px 8px rgba(0,0,0,0.7); }
-.intel { position: absolute; left: 14px; right: 14px; bottom: 96px; z-index: 20; background: var(--paper); color: var(--ink); padding: 14px 16px; }
+.intel { position: absolute; left: 14px; right: 14px; bottom: 96px; z-index: 20; background: var(--paper); color: var(--ink); padding: 14px 16px; transition: bottom 0.3s ease; }
+.intel.low { bottom: 62px; }
 .intel .name { font-family: var(--serif); font-size: 20px; margin: 4px 0 2px; line-height: 1.15; }
 .intel p { margin: 0; font-size: 13px; color: var(--muted); }
 
