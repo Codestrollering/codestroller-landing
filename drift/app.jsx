@@ -17,7 +17,16 @@ const SPOTS = [
     category: 'cookware',
     coords: '48.8644° N, 2.3431° E',
     image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop',
-    details: '2.5mm Cuivre Massif · Réf. 44102 · Détaxe sur place'
+    details: '2.5mm Cuivre Massif · Réf. 44102 · Détaxe sur place',
+    lens: {
+      label: 'OCR ÉTIQUETTE / TAG DECODE',
+      intel: 'DIAGNOSTIC BOUTIQUE / SHOP INTEL',
+      lines: [
+        { fr: 'Réf. 44102 — Sauteuse 24 cm', en: '24 cm copper sauté pan' },
+        { fr: 'Étamage main · 2.5 mm', en: 'Hand-wiped tin lining · 2.5 mm wall' }
+      ]
+    },
+    approach: { arrow: '↱', fr: 'Tourner à droite après Saint-Eustache', en: 'Turn right past Saint-Eustache onto Rue Coquillière' }
   },
   {
     id: 'chez-denise',
@@ -33,7 +42,16 @@ const SPOTS = [
     category: 'food',
     coords: '48.8619° N, 2.3458° E',
     image: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1200&auto=format&fit=crop',
-    details: '4 Couverts libres au comptoir / 4 Open counter seats'
+    details: '4 Couverts libres au comptoir / 4 Open counter seats',
+    lens: {
+      label: 'OCR ARDOISE / MENU DECODE',
+      intel: 'DIAGNOSTIC BISTROT / VENUE INTEL',
+      lines: [
+        { fr: 'Os à moelle grillé', en: 'Roasted bone marrow / sea salt' },
+        { fr: 'Ris de veau au vin jaune', en: 'Crisp veal sweetbreads in Jura wine' }
+      ]
+    },
+    approach: { arrow: '↰', fr: 'Tourner à gauche rue des Prouvaires', en: 'Turn left off Rue Saint-Honoré onto Rue des Prouvaires' }
   },
   {
     id: 'doursoux',
@@ -49,7 +67,16 @@ const SPOTS = [
     category: 'workwear',
     coords: '48.8385° N, 2.3015° E',
     image: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=1200&auto=format&fit=crop',
-    details: '30 € – 65 € · Stocks militaires & chemins de fer d\'époque'
+    details: '30 € – 65 € · Stocks militaires & chemins de fer d\'époque',
+    lens: {
+      label: 'OCR ÉTIQUETTE / LABEL DECODE',
+      intel: 'DIAGNOSTIC BOUTIQUE / SHOP INTEL',
+      lines: [
+        { fr: 'Veste de travail · Moleskine', en: 'Moleskin chore coat' },
+        { fr: 'Taille 50 · Années 1960', en: 'EU 50 (≈ US 40) · 1960s stock' }
+      ]
+    },
+    approach: { arrow: '↑', fr: 'Tout droit boulevard de Vaugirard', en: 'Straight on along Boulevard de Vaugirard to the passage' }
   },
   {
     id: 'baron-rouge',
@@ -65,7 +92,16 @@ const SPOTS = [
     category: 'food',
     coords: '48.8497° N, 2.3785° E',
     image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=1200&auto=format&fit=crop',
-    details: 'Sans réservation · Dégustation sur tonneau'
+    details: 'Sans réservation · Dégustation sur tonneau',
+    lens: {
+      label: 'OCR ARDOISE / WINE BOARD',
+      intel: 'DIAGNOSTIC BISTROT / VENUE INTEL',
+      lines: [
+        { fr: 'Muscadet sur lie · au verre', en: 'Muscadet aged on lees · by the glass' },
+        { fr: 'Huîtres n°3 · la douzaine', en: 'Size 3 oysters · by the dozen' }
+      ]
+    },
+    approach: { arrow: '↱', fr: 'Tourner à droite au marché d\'Aligre', en: 'Turn right at Marché d\'Aligre' }
   }
 ];
 
@@ -95,7 +131,6 @@ const EVENTS_NOV = [
 ];
 
 export default function App() {
-  const [paradigm, setParadigm] = useState('derive'); // 'drift' (Optical HUD) | 'derive' (Monograph typography, color photos)
   const [activeScreen, setActiveScreen] = useState('courant'); // 'courant' | 'pluie' | 'dossier' | 'cahier' | 'oeil' | 'poche'
   const [selectedSpot, setSelectedSpot] = useState(SPOTS[0]);
   const [isRaining, setIsRaining] = useState(false);
@@ -124,15 +159,7 @@ export default function App() {
   useEffect(() => {
     resetTimer();
     return () => clearInterval(timerRef.current);
-  }, [activeScreen, paradigm, isRaining]);
-
-  const handleCanvasInteraction = () => {
-    if (!chromeVisible) {
-      resetTimer();
-    } else {
-      resetTimer();
-    }
-  };
+  }, [activeScreen, isRaining]);
 
   return (
     <div className="w-full min-h-screen bg-neutral-950 text-neutral-100 flex flex-col items-center justify-start p-2 sm:p-6 select-none font-sans">
@@ -149,31 +176,6 @@ export default function App() {
               {chromeVisible ? `Active (${secondsRemaining}s)` : 'Hidden (Quiescent)'}
             </span>
           </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          <button
-            onClick={() => setParadigm('drift')}
-            className={`py-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 border ${
-              paradigm === 'drift'
-                ? 'bg-neutral-100 text-neutral-950 border-white shadow-sm'
-                : 'bg-neutral-800/80 text-neutral-400 border-neutral-700 hover:text-white'
-            }`}
-          >
-            <span>DRIFT</span>
-            <span className="text-[10px] font-mono font-normal opacity-70">Optical HUD</span>
-          </button>
-          <button
-            onClick={() => setParadigm('derive')}
-            className={`py-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 border ${
-              paradigm === 'derive'
-                ? 'bg-neutral-100 text-neutral-950 border-white shadow-sm'
-                : 'bg-neutral-800/80 text-neutral-400 border-neutral-700 hover:text-white'
-            }`}
-          >
-            <span>DÉRIVE</span>
-            <span className="text-[10px] font-mono font-normal opacity-70">Monograph</span>
-          </button>
         </div>
 
         <div className="flex items-center justify-between pt-1 border-t border-neutral-800/80 text-xs text-neutral-400">
@@ -201,10 +203,8 @@ export default function App() {
 
       {/* --- PHONE SHELL VIEWPORT --- */}
       <main
-        onClick={handleCanvasInteraction}
-        className={`relative w-full max-w-[400px] h-[812px] rounded-[44px] overflow-hidden border-[6px] border-neutral-800 shadow-2xl transition-all duration-300 ${
-          paradigm === 'drift' ? 'bg-black' : 'bg-neutral-900'
-        }`}
+        onClick={resetTimer}
+        className="relative w-full max-w-[400px] h-[812px] rounded-[44px] overflow-hidden border-[6px] border-neutral-800 shadow-2xl bg-neutral-900"
       >
         {/* PHYSICAL SPEAKER & CAMERA NOTCH */}
         <div className="absolute top-0 inset-x-0 h-7 flex items-center justify-center z-50 pointer-events-none">
@@ -217,31 +217,31 @@ export default function App() {
         {/* --- SCREEN RENDERER ROUTER --- */}
         <div className="w-full h-full relative overflow-hidden">
           {activeScreen === 'courant' && (
-            <ScreenCourant paradigm={paradigm} spot={selectedSpot} onSelectSpot={setSelectedSpot} onGoDossier={() => setActiveScreen('dossier')} />
+            <ScreenCourant spot={selectedSpot} onSelectSpot={setSelectedSpot} onGoDossier={() => setActiveScreen('dossier')} />
           )}
 
           {activeScreen === 'pluie' && (
-            <ScreenPluie paradigm={paradigm} onDismiss={() => setActiveScreen('courant')} />
+            <ScreenPluie onDismiss={() => setActiveScreen('courant')} />
           )}
 
           {activeScreen === 'dossier' && (
-            <ScreenDossier paradigm={paradigm} spot={selectedSpot} onBack={() => setActiveScreen('courant')} />
+            <ScreenDossier spot={selectedSpot} onBack={() => setActiveScreen('courant')} />
           )}
 
           {activeScreen === 'cahier' && (
-            <ScreenCahier paradigm={paradigm} events={EVENTS_NOV} />
+            <ScreenCahier events={EVENTS_NOV} />
           )}
 
           {activeScreen === 'oeil' && (
-            <ScreenOeil paradigm={paradigm} spot={selectedSpot} />
+            <ScreenOeil spot={selectedSpot} />
           )}
 
           {activeScreen === 'poche' && (
-            <ScreenPoche paradigm={paradigm} spot={selectedSpot} isRaining={isRaining} onWake={() => setActiveScreen('courant')} />
+            <ScreenPoche spot={selectedSpot} isRaining={isRaining} onWake={() => setActiveScreen('courant')} />
           )}
         </div>
 
-        {/* --- AMBIENT FLOATING ACTIONS & TRANSLATION HUD --- */}
+        {/* --- AMBIENT FLOATING ACTIONS --- */}
         {activeScreen !== 'poche' && (
           <div
             className={`absolute bottom-24 inset-x-4 z-40 flex items-center justify-between gap-3 transition-all duration-300 pointer-events-auto ${
@@ -254,16 +254,12 @@ export default function App() {
                 setActiveScreen(activeScreen === 'pluie' ? 'courant' : 'pluie');
                 resetTimer();
               }}
-              className={`flex-1 py-2.5 px-3 rounded-full text-xs font-bold tracking-tight transition shadow-lg flex items-center justify-center gap-2 border ${
-                paradigm === 'drift'
-                  ? 'bg-neutral-900/90 text-white border-neutral-700 backdrop-blur-md hover:bg-neutral-800'
-                  : 'bg-white text-black border-black hover:bg-neutral-200'
-              }`}
+              className="flex-1 py-2.5 px-3 rounded-full text-xs font-bold tracking-tight transition shadow-lg flex items-center justify-center gap-2 border bg-white text-black border-black hover:bg-neutral-200"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
               </svg>
-              <span>BIFURQUER / REROUTE</span>
+              <span>Reroute</span>
             </button>
 
             <button
@@ -272,98 +268,56 @@ export default function App() {
                 setActiveScreen('oeil');
                 resetTimer();
               }}
-              className={`flex-1 py-2.5 px-3 rounded-full text-xs font-bold tracking-tight transition shadow-lg flex items-center justify-center gap-2 border ${
-                paradigm === 'drift'
-                  ? 'bg-neutral-900/90 text-white border-neutral-700 backdrop-blur-md hover:bg-neutral-800'
-                  : 'bg-black text-white border-white hover:bg-neutral-900'
-              }`}
+              className="flex-1 py-2.5 px-3 rounded-full text-xs font-bold tracking-tight transition shadow-lg flex items-center justify-center gap-2 border bg-black text-white border-white hover:bg-neutral-900"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
               </svg>
-              <span>L'ŒIL FAÇADE / LENS</span>
+              <span>Lens</span>
             </button>
           </div>
         )}
 
-        {/* --- AUTO-HIDING BILINGUAL BOTTOM NAVIGATION DOCK --- */}
+        {/* --- AUTO-HIDING BILINGUAL BOTTOM NAVIGATION: EDITORIAL FOLIO BAR --- */}
         {activeScreen !== 'poche' && (
           <nav
             className={`absolute bottom-5 inset-x-3 z-40 transition-all duration-400 ease-out ${
               chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
             }`}
           >
-            {paradigm === 'drift' ? (
-              // DRIFT: Frosted Smoked Glass Dock
-              <div className="bg-black/80 backdrop-blur-xl border border-white/15 rounded-3xl p-1.5 shadow-2xl flex items-center justify-between text-neutral-300">
-                <NavButton
-                  active={activeScreen === 'courant'}
-                  onClick={() => { setActiveScreen('courant'); resetTimer(); }}
-                  labelFr="COURANT" labelEn="DRIFT"
-                  icon={<CompassIcon />}
-                />
-                <NavButton
-                  active={activeScreen === 'pluie'}
-                  onClick={() => { setActiveScreen('pluie'); resetTimer(); }}
-                  labelFr="PLUIE" labelEn="RAIN"
-                  icon={<RainIcon />}
-                />
-                <NavButton
-                  active={activeScreen === 'oeil'}
-                  onClick={() => { setActiveScreen('oeil'); resetTimer(); }}
-                  labelFr="L'ŒIL" labelEn="LENS"
-                  isCenter
-                  icon={<ApertureIcon />}
-                />
-                <NavButton
-                  active={activeScreen === 'cahier'}
-                  onClick={() => { setActiveScreen('cahier'); resetTimer(); }}
-                  labelFr="CAHIER" labelEn="REGISTER"
-                  icon={<BookIcon />}
-                />
-                <NavButton
-                  active={activeScreen === 'poche'}
-                  onClick={() => { setActiveScreen('poche'); resetTimer(); }}
-                  labelFr="POCHE" labelEn="POCKET"
-                  icon={<PocketIcon />}
-                />
-              </div>
-            ) : (
-              // DÉRIVE: Editorial Monograph Folio Bar
-              <div className="bg-neutral-900 border-t-2 border-white/20 p-2 shadow-2xl flex items-center justify-between text-neutral-200">
-                <NavButtonDerive
-                  active={activeScreen === 'courant'}
-                  onClick={() => { setActiveScreen('courant'); resetTimer(); }}
-                  labelFr="COURANT" labelEn="DRIFT"
-                  icon={<CompassIcon />}
-                />
-                <NavButtonDerive
-                  active={activeScreen === 'pluie'}
-                  onClick={() => { setActiveScreen('pluie'); resetTimer(); }}
-                  labelFr="PLUIE" labelEn="RAIN"
-                  icon={<RainIcon />}
-                />
-                <NavButtonDerive
-                  active={activeScreen === 'cahier'}
-                  onClick={() => { setActiveScreen('cahier'); resetTimer(); }}
-                  labelFr="CAHIER" labelEn="REGISTER"
-                  icon={<BookIcon />}
-                />
-                <NavButtonDerive
-                  active={activeScreen === 'oeil'}
-                  onClick={() => { setActiveScreen('oeil'); resetTimer(); }}
-                  labelFr="L'ŒIL" labelEn="LENS"
-                  icon={<ApertureIcon />}
-                />
-                <NavButtonDerive
-                  active={activeScreen === 'poche'}
-                  onClick={() => { setActiveScreen('poche'); resetTimer(); }}
-                  labelFr="POCHE" labelEn="POCKET"
-                  icon={<PocketIcon />}
-                />
-              </div>
-            )}
+            <div className="bg-neutral-900 border-t-2 border-white/20 p-2 shadow-2xl flex items-center justify-between text-neutral-200">
+              <NavButton
+                active={activeScreen === 'courant'}
+                onClick={() => { setActiveScreen('courant'); resetTimer(); }}
+                labelFr="COURANT" labelEn="DRIFT"
+                icon={<CompassIcon />}
+              />
+              <NavButton
+                active={activeScreen === 'pluie'}
+                onClick={() => { setActiveScreen('pluie'); resetTimer(); }}
+                labelFr="PLUIE" labelEn="RAIN"
+                icon={<RainIcon />}
+              />
+              <NavButton
+                active={activeScreen === 'cahier'}
+                onClick={() => { setActiveScreen('cahier'); resetTimer(); }}
+                labelFr="CAHIER" labelEn="REGISTER"
+                icon={<BookIcon />}
+              />
+              <NavButton
+                active={activeScreen === 'oeil'}
+                onClick={() => { setActiveScreen('oeil'); resetTimer(); }}
+                labelFr="L'ŒIL" labelEn="LENS"
+                icon={<ApertureIcon />}
+              />
+              <NavButton
+                active={activeScreen === 'poche'}
+                onClick={() => { setActiveScreen('poche'); resetTimer(); }}
+                labelFr="POCHE" labelEn="POCKET"
+                icon={<PocketIcon />}
+              />
+            </div>
           </nav>
         )}
 
@@ -375,21 +329,21 @@ export default function App() {
 // ==========================================
 // SCREEN 1: LE COURANT (THE DRIFT)
 // ==========================================
-function ScreenCourant({ paradigm, spot, onSelectSpot, onGoDossier }) {
+function ScreenCourant({ spot, onSelectSpot, onGoDossier }) {
   return (
     <div className="relative w-full h-full">
       {/* Background Media */}
       <img
         src={spot.image}
         alt={spot.name}
-        className={`w-full h-full object-cover ${paradigm === 'derive' ? 'contrast-110' : 'contrast-105'}`}
+        className="w-full h-full object-cover contrast-110"
       />
-      <div className={`absolute inset-0 ${paradigm === 'drift' ? 'bg-gradient-to-t from-black via-black/30 to-black/60' : 'bg-gradient-to-t from-black/90 via-black/20 to-black/70'}`} />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/70" />
 
       {/* Top Telemetry Header */}
       <div className="absolute top-9 inset-x-5 flex justify-between items-start z-10 font-mono text-[11px] tracking-wider text-neutral-200">
         <div>
-          <span className="font-bold tracking-widest">{paradigm === 'drift' ? 'DRIFT' : 'DÉRIVE'}</span>
+          <span className="font-bold tracking-widest">DÉRIVE</span>
           <span className="mx-1.5 opacity-40">·</span>
           <span>{spot.arr}</span>
         </div>
@@ -398,80 +352,38 @@ function ScreenCourant({ paradigm, spot, onSelectSpot, onGoDossier }) {
         </div>
       </div>
 
-      {/* Center Dynamic Element */}
-      {paradigm === 'drift' ? (
-        // DRIFT: Optical reticle overlay
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="relative w-44 h-44 border border-white/40 rounded-xl flex items-center justify-center">
-            <div className="w-2.5 h-2.5 bg-amber-400 rounded-full animate-ping"></div>
-            <div className="absolute -top-3 left-3 bg-black/80 px-1.5 py-0.5 text-[9px] font-mono text-amber-300 border border-white/20">
-              TARGET IN VECTOR
-            </div>
-            <div className="absolute -bottom-3 right-3 bg-black/80 px-1.5 py-0.5 text-[9px] font-mono text-neutral-300 border border-white/20">
-              {spot.dist}
-            </div>
-          </div>
+      {/* Ragged cut-out label over the visual */}
+      <div className="absolute top-20 left-5 right-5 space-y-1.5 pointer-events-none">
+        <div className="inline-block bg-white text-black font-mono text-[10px] font-bold uppercase px-2 py-0.5 tracking-wider shadow">
+          {spot.arr} · {spot.dist}
         </div>
-      ) : (
-        // DÉRIVE: Ragged cut-out label over the visual
-        <div className="absolute top-20 left-5 right-5 space-y-1.5 pointer-events-none">
-          <div className="inline-block bg-white text-black font-mono text-[10px] font-bold uppercase px-2 py-0.5 tracking-wider shadow">
-            {spot.arr} · {spot.dist}
-          </div>
-          <br />
-          <h1 className="inline-block bg-white text-black font-black text-2xl tracking-tighter px-2.5 py-1 uppercase shadow leading-none">
-            {spot.name}
-          </h1>
-        </div>
-      )}
+        <br />
+        <h1 className="inline-block bg-white text-black font-black text-2xl tracking-tighter px-2.5 py-1 uppercase shadow leading-none">
+          {spot.name}
+        </h1>
+      </div>
 
       {/* Bottom Context Details Card */}
       <div className="absolute bottom-36 inset-x-5 z-20">
-        {paradigm === 'drift' ? (
-          <div
-            onClick={onGoDossier}
-            className="cursor-pointer bg-neutral-950/85 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl hover:border-white/40 transition"
-          >
-            <div className="flex justify-between items-start mb-1.5">
-              <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold">
-                  {spot.tagFr} / {spot.tagEn}
-                </span>
-                <h2 className="text-lg font-bold text-white tracking-tight">{spot.name}</h2>
-              </div>
-              <span className="text-xs font-mono bg-white/10 px-2 py-0.5 rounded text-neutral-300">{spot.dist}</span>
-            </div>
-            <p className="text-xs text-neutral-300 font-serif leading-relaxed line-clamp-2 mb-2">
-              {spot.specFr}
-            </p>
-            <div className="flex items-center justify-between text-[11px] font-mono pt-2 border-t border-white/10 text-neutral-400">
-              <span>{spot.hours}</span>
-              <span className="text-white font-bold flex items-center gap-1">
-                DÉTAIL DOSSIER <span className="text-xs">→</span>
-              </span>
-            </div>
+        <div
+          onClick={onGoDossier}
+          className="cursor-pointer bg-neutral-900 border-t-2 border-white p-3.5 shadow-2xl space-y-2 hover:bg-neutral-800 transition"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">{spot.address}</span>
+            <span className="text-xs font-mono font-bold text-white">{spot.dist}</span>
           </div>
-        ) : (
-          <div
-            onClick={onGoDossier}
-            className="cursor-pointer bg-neutral-900 border-t-2 border-white p-3.5 shadow-2xl space-y-2 hover:bg-neutral-850 transition"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">{spot.address}</span>
-              <span className="text-xs font-mono font-bold text-white">{spot.dist}</span>
-            </div>
-            <p className="text-xs text-neutral-200 font-serif italic leading-snug">
-              "{spot.specFr}"
-            </p>
-            <p className="text-[11px] text-neutral-400 font-sans leading-tight">
-              {spot.specEn}
-            </p>
-            <div className="pt-1.5 flex justify-between items-center text-[10px] font-mono text-neutral-300 uppercase">
-              <span>{spot.details}</span>
-              <span className="underline font-bold text-white">OUVRIR ARCHIVE →</span>
-            </div>
+          <p className="text-xs text-neutral-200 font-serif italic leading-snug">
+            "{spot.specFr}"
+          </p>
+          <p className="text-[11px] text-neutral-400 font-sans leading-tight">
+            {spot.specEn}
+          </p>
+          <div className="pt-1.5 flex justify-between items-center text-[10px] font-mono text-neutral-300 uppercase">
+            <span>{spot.details}</span>
+            <span className="underline font-bold text-white">OUVRIR ARCHIVE →</span>
           </div>
-        )}
+        </div>
 
         {/* Spot Carousel Switcher Dots */}
         <div className="flex justify-center items-center gap-2 mt-3">
@@ -496,13 +408,13 @@ function ScreenCourant({ paradigm, spot, onSelectSpot, onGoDossier }) {
 // ==========================================
 // SCREEN 2: BIFURCATION (RAIN REROUTE)
 // ==========================================
-function ScreenPluie({ paradigm, onDismiss }) {
+function ScreenPluie({ onDismiss }) {
   return (
     <div className="relative w-full h-full bg-neutral-950">
       <img
         src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1200&auto=format&fit=crop"
         alt="Passage des Panoramas"
-        className={`w-full h-full object-cover ${paradigm === 'derive' ? 'contrast-110 brightness-75' : 'brightness-90'}`}
+        className="w-full h-full object-cover contrast-110 brightness-75"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80" />
 
@@ -568,14 +480,14 @@ function ScreenPluie({ paradigm, onDismiss }) {
 // ==========================================
 // SCREEN 3: PLAQUE TOURNANTE & DOSSIER DÉTAIL
 // ==========================================
-function ScreenDossier({ paradigm, spot, onBack }) {
+function ScreenDossier({ spot, onBack }) {
   return (
     <div className="relative w-full h-full bg-neutral-950 overflow-y-auto pb-32">
       <div className="relative h-72 w-full">
         <img
           src={spot.image}
           alt={spot.name}
-          className={`w-full h-full object-cover ${paradigm === 'derive' ? 'contrast-110' : ''}`}
+          className="w-full h-full object-cover contrast-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-black/70" />
         <button
@@ -638,7 +550,7 @@ function ScreenDossier({ paradigm, spot, onBack }) {
 // ==========================================
 // SCREEN 4: LE CAHIER (CULTURAL REGISTER)
 // ==========================================
-function ScreenCahier({ paradigm, events }) {
+function ScreenCahier({ events }) {
   return (
     <div className="relative w-full h-full bg-neutral-950 p-5 pt-10 overflow-y-auto pb-32">
       <div className="flex justify-between items-baseline border-b border-white/20 pb-2 mb-4">
@@ -655,11 +567,7 @@ function ScreenCahier({ paradigm, events }) {
         {events.map((evt) => (
           <div
             key={evt.id}
-            className={`border rounded-2xl p-4 space-y-2.5 transition ${
-              paradigm === 'derive'
-                ? 'bg-neutral-900 border-white/20'
-                : 'bg-neutral-900/70 backdrop-blur-md border-white/10'
-            }`}
+            className="border rounded-2xl p-4 space-y-2.5 transition bg-neutral-900 border-white/20"
           >
             <div className="flex justify-between items-center text-[10px] font-mono text-amber-400 font-bold uppercase">
               <span>{evt.time}</span>
@@ -691,13 +599,13 @@ function ScreenCahier({ paradigm, events }) {
 // ==========================================
 // SCREEN 5: L'ŒIL (OPTICAL VIEWFINDER & OCR)
 // ==========================================
-function ScreenOeil({ paradigm, spot }) {
+function ScreenOeil({ spot }) {
   return (
     <div className="relative w-full h-full bg-black">
-      {/* Viewfinder live video simulated camera feed */}
+      {/* Viewfinder: simulated camera feed of the selected spot */}
       <img
-        src="https://images.unsplash.com/photo-1509299349698-dd22323b5963?q=80&w=1200&auto=format&fit=crop"
-        alt="Camera Viewfinder"
+        src={spot.image}
+        alt={`Viewfinder: ${spot.name}`}
         className="w-full h-full object-cover contrast-110"
       />
       <div className="absolute inset-0 bg-black/30" />
@@ -712,33 +620,31 @@ function ScreenOeil({ paradigm, spot }) {
           <span className="text-neutral-300">ISO 400 · 1/125s</span>
         </div>
 
-        {/* Target Reticle analyzing chalk or facade */}
-        <div className="self-center w-52 h-44 border-2 border-dashed border-amber-400/80 rounded-xl relative flex flex-col items-center justify-center p-2 text-center bg-black/40 backdrop-blur-xs">
+        {/* Target Reticle decoding the sign, slate or label in frame */}
+        <div className="self-center w-56 min-h-44 border-2 border-dashed border-amber-400/80 rounded-xl relative flex flex-col items-center justify-center p-2 text-center bg-black/40 backdrop-blur-xs">
           <span className="text-[9px] font-mono uppercase bg-amber-400 text-black px-1.5 font-bold mb-1">
-            OCR ARDOISE / MENU DECODE
+            {spot.lens.label}
           </span>
-          <div className="text-xs font-bold text-white leading-tight">
-            Os à moelle grillé
-          </div>
-          <div className="text-[10px] font-mono text-neutral-300 mt-0.5">
-            [Roasted bone marrow / sea salt]
-          </div>
-          <div className="text-xs font-bold text-white leading-tight mt-1">
-            Ris de veau au vin jaune
-          </div>
-          <div className="text-[10px] font-mono text-neutral-300 mt-0.5">
-            [Crisp veal sweetbreads in Jura wine]
-          </div>
+          {spot.lens.lines.map((line, i) => (
+            <div key={line.fr} className={i > 0 ? 'mt-1' : ''}>
+              <div className="text-xs font-bold text-white leading-tight">
+                {line.fr}
+              </div>
+              <div className="text-[10px] font-mono text-neutral-300 mt-0.5">
+                [{line.en}]
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Optical Analysis Card */}
-        <div className="bg-black/85 backdrop-blur-xl border border-white/20 rounded-2xl p-3 text-xs font-mono space-y-1 mb-20">
+        <div className="bg-black/85 backdrop-blur-xl border border-white/20 rounded-2xl p-3 text-xs font-mono space-y-1 mb-32">
           <div className="text-amber-400 font-bold text-[10px] uppercase">
-            DIAGNOSTIC BISTROT / VENUE INTEL
+            {spot.lens.intel}
           </div>
-          <div className="text-white font-bold text-sm">Chez Denise — 5 Rue des Prouvaires</div>
+          <div className="text-white font-bold text-sm">{spot.name} — {spot.address}</div>
           <div className="text-neutral-400 text-[11px]">
-            Table libre : 4 places au comptoir · Brouilly au pot
+            {spot.details}
           </div>
         </div>
       </div>
@@ -749,7 +655,7 @@ function ScreenOeil({ paradigm, spot }) {
 // ==========================================
 // SCREEN 6: MODE POCHE (LOCK SCREEN LIVE ACTIVITY)
 // ==========================================
-function ScreenPoche({ paradigm, spot, isRaining, onWake }) {
+function ScreenPoche({ spot, isRaining, onWake }) {
   return (
     <div
       onClick={onWake}
@@ -761,37 +667,37 @@ function ScreenPoche({ paradigm, spot, isRaining, onWake }) {
         <div className="text-6xl font-light text-white tracking-tighter">16:45</div>
       </div>
 
-      {/* Live Activity Notification Card */}
+      {/* Live Activity Notification Card: next turn toward the selected spot */}
       <div className="w-full bg-neutral-900/90 border border-neutral-700/80 rounded-3xl p-4 shadow-2xl backdrop-blur-2xl space-y-3">
         <div className="flex justify-between items-center text-[10px] font-mono text-neutral-400 border-b border-neutral-800 pb-2">
           <span className="font-bold text-white flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-            {paradigm === 'drift' ? 'DRIFT · VIe ARR.' : 'DÉRIVE · LE COURANT'}
+            DÉRIVE · {spot.arr}
           </span>
           <span>16:45 · 8°C</span>
         </div>
 
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-2xl bg-neutral-800 border border-neutral-700 flex items-center justify-center text-amber-400 font-bold font-mono text-sm">
-            ↰
+            {spot.approach.arrow}
           </div>
           <div className="flex-1">
             <div className="text-xs font-bold text-white leading-tight">
-              90m : Tourner à gauche à la fontaine
+              {spot.dist} : {spot.approach.fr}
             </div>
             <div className="text-[11px] text-neutral-400 font-sans">
-              Turn left at stone fountain towards Rue de Verneuil
+              {spot.approach.en}
             </div>
           </div>
         </div>
 
         <div className="bg-black/60 rounded-xl p-2.5 text-[11px] font-mono space-y-1 text-neutral-300 border border-neutral-800">
-          <div className="flex justify-between">
-            <span className="text-white font-bold">Boulangerie Poilâne</span>
-            <span className="text-emerald-400">Four à bois actif</span>
+          <div className="flex justify-between gap-2">
+            <span className="text-white font-bold">{spot.name}</span>
+            <span className="text-emerald-400 shrink-0">{spot.address}</span>
           </div>
           <div className="text-neutral-400 text-[10px]">
-            {isRaining ? 'Averse en cours · Arcades à 120m' : 'Temps frais · Coucher du soleil 17:02'}
+            {isRaining ? 'Averse en cours · Reroute pour un abri / Rain: open Reroute for shelter' : `${spot.hours} · Coucher du soleil 17:02`}
           </div>
         </div>
       </div>
@@ -810,27 +716,7 @@ function ScreenPoche({ paradigm, spot, isRaining, onWake }) {
 // ==========================================
 // NAVIGATION ICON & BUTTON COMPONENTS
 // ==========================================
-function NavButton({ active, onClick, labelFr, labelEn, icon, isCenter }) {
-  return (
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick();
-      }}
-      className={`flex flex-col items-center justify-center transition-all ${
-        isCenter
-          ? 'w-12 h-12 -my-2 rounded-2xl bg-white text-black shadow-lg font-bold'
-          : `p-1.5 rounded-xl ${active ? 'text-white font-bold' : 'text-neutral-400 hover:text-neutral-200'}`
-      }`}
-    >
-      <div className="w-4 h-4 mb-0.5">{icon}</div>
-      <span className="text-[9px] font-mono tracking-tighter leading-none">{labelFr}</span>
-      <span className="text-[7px] font-mono opacity-60 leading-none">{labelEn}</span>
-    </button>
-  );
-}
-
-function NavButtonDerive({ active, onClick, labelFr, labelEn, icon }) {
+function NavButton({ active, onClick, labelFr, labelEn, icon }) {
   return (
     <button
       onClick={(e) => {
