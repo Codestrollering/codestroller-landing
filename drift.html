@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Drift / Dérive — Prototype</title>
-  <!-- No build step: Tailwind v4 browser runtime + Babel compile app.jsx in the browser. -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+  <title>Drift — Une semaine à pied dans Paris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" />
+  <link rel="stylesheet" href="/drift/drift.css" />
+  <!-- No build step: Babel compiles app.jsx in the browser. -->
   <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
   <script type="importmap">
     {
@@ -15,7 +18,6 @@
       }
     }
   </script>
-  <style>body { margin: 0; background: #0a0a0a; }</style>
 </head>
 <body>
   <div id="root"></div>
