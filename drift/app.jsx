@@ -95,7 +95,7 @@ const EVENTS_NOV = [
 ];
 
 export default function App() {
-  const [paradigm, setParadigm] = useState('drift'); // 'drift' (Optical HUD) | 'derive' (B&W Monograph)
+  const [paradigm, setParadigm] = useState('derive'); // 'drift' (Optical HUD) | 'derive' (Monograph typography, color photos)
   const [activeScreen, setActiveScreen] = useState('courant'); // 'courant' | 'pluie' | 'dossier' | 'cahier' | 'oeil' | 'poche'
   const [selectedSpot, setSelectedSpot] = useState(SPOTS[0]);
   const [isRaining, setIsRaining] = useState(false);
@@ -382,7 +382,7 @@ function ScreenCourant({ paradigm, spot, onSelectSpot, onGoDossier }) {
       <img
         src={spot.image}
         alt={spot.name}
-        className={`w-full h-full object-cover ${paradigm === 'derive' ? 'grayscale contrast-125' : 'contrast-105'}`}
+        className={`w-full h-full object-cover ${paradigm === 'derive' ? 'contrast-110' : 'contrast-105'}`}
       />
       <div className={`absolute inset-0 ${paradigm === 'drift' ? 'bg-gradient-to-t from-black via-black/30 to-black/60' : 'bg-gradient-to-t from-black/90 via-black/20 to-black/70'}`} />
 
@@ -502,7 +502,7 @@ function ScreenPluie({ paradigm, onDismiss }) {
       <img
         src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1200&auto=format&fit=crop"
         alt="Passage des Panoramas"
-        className={`w-full h-full object-cover ${paradigm === 'derive' ? 'grayscale contrast-150 brightness-75' : 'brightness-90'}`}
+        className={`w-full h-full object-cover ${paradigm === 'derive' ? 'contrast-110 brightness-75' : 'brightness-90'}`}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80" />
 
@@ -575,7 +575,7 @@ function ScreenDossier({ paradigm, spot, onBack }) {
         <img
           src={spot.image}
           alt={spot.name}
-          className={`w-full h-full object-cover ${paradigm === 'derive' ? 'grayscale contrast-125' : ''}`}
+          className={`w-full h-full object-cover ${paradigm === 'derive' ? 'contrast-110' : ''}`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-black/70" />
         <button
