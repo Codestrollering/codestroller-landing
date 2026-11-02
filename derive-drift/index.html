@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dérive &amp; Drift — interactive prototype</title>
+<meta name="description" content="Interactive phone prototype of Dérive & Drift, a Paris wandering guide.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Noto+Serif:wght@400;700&display=swap">
+<style>
+  html, body { margin: 0; height: 100%; background: #111; }
+  body { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  #stage { width: 390px; height: 844px; transform-origin: center center; flex: none; }
+  #phone { width: 390px; height: 844px; position: relative; overflow: hidden; background: #000; color: #f5f5f5;
+    font-family: 'Dongle', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 700; line-height: 0.75; user-select: none; -webkit-user-select: none; border-radius: 40px;
+    box-shadow: 0 0 0 1px #2a2a2a, 0 30px 80px rgba(0,0,0,0.7); }
+  #phone button { all: unset; cursor: pointer; box-sizing: border-box; }
+  #phone button:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
+  .serif { font-family: 'Noto Serif', Georgia, serif; line-height: 1.6; }
+  .fr { opacity: 0.6; }
+  .abs { position: absolute; }
+  .fill { position: absolute; inset: 0; }
+  #live.pulse { animation: buzz .25s ease-in-out 4; border-color: #fbbf24 !important; }
+  @keyframes buzz { 0%,100% { translate: 0 0; } 25% { translate: -3px 0; } 75% { translate: 3px 0; } }
+  .arrow { animation: sway 3s ease-in-out infinite; transform-origin: 60px 60px; }
+  @keyframes sway { 0%,100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+  @media (max-width: 430px) { #phone { border-radius: 0; box-shadow: none; } body { background: #000; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div id="stage"><div id="phone" role="application" aria-label="Dérive & Drift prototype"></div></div>
+<script>
+const SPOTS = [
+  { id: "dehillerin", name: "E. Dehillerin", tagEn: "Heavy Copper & Cutlery", tagFr: "Cuivre & Outillage", arr: "1er Arrondissement", address: "18 Rue Coquillière", dist: "110m", hoursEn: "09:00 – 19:00 · Open", hoursFr: "Ouvert", specFr: "Cuivre massif 2.5mm–3mm étamé au feu. Queue de fonte rivetée. Aucun prix affiché : relevé au crayon et consultation du grand registre papier.", specEn: "Solid 2.5–3mm hand-wiped tin copper. Riveted cast-iron handles. No price tags: cross-reference hand-punched codes in the central ledger.", detailsEn: "2.5mm solid copper · Ref. 44102 · Tax refund on site", detailsFr: "2.5mm Cuivre Massif · Réf. 44102 · Détaxe sur place" },
+  { id: "chez-denise", name: "Chez Denise (La Tour de Montlhéry)", tagEn: "Historic All-Night Meat Counter", tagFr: "Bistrot de Nuit & Halles", arr: "1er Arrondissement", address: "5 Rue des Prouvaires", dist: "180m", hoursEn: "Open until 5:00 AM", hoursFr: "Ouvert jusqu’à 05:00", specFr: "Nappes à carreaux rouges, serveurs en longs tabliers, os à moelle brûlants, tripes au bouillon et Brouilly tiré au pot.", specEn: "Red checkered cloth, floor-length white aprons, roasted marrow bones, Caen-style tripe, and Beaujolais by the earthenware jug.", detailsEn: "4 Open counter seats", detailsFr: "4 Couverts libres au comptoir" },
+  { id: "doursoux", name: "Doursoux Surplus Militaire", tagEn: "Authentic French Workwear Surplus", tagFr: "Toile & Bleu de Travail", arr: "15e Arrondissement", address: "3 Passage Alexandre", dist: "340m", hoursEn: "10:00 – 18:30 · Tue–Sat", hoursFr: "Mar–Sam", specFr: "Rayons d’acier brut sans mise en scène. Véritables vestes en moleskine et sergé de coton bleu 1950–1970 à prix d’atelier (30 €–65 €).", specEn: "Raw steel shelves without boutique markups. Authentic French moleskin and indigo cotton chore coats (30 €–65 €).", detailsEn: "30 € – 65 € · Period military stock", detailsFr: "Stocks militaires d’époque" },
+  { id: "baron-rouge", name: "Le Baron Rouge", tagEn: "Curb Wine Cask & Fresh Oysters", tagFr: "Zinc & Huîtres au Tonneau", arr: "12e Arrondissement", address: "1 Rue Théophile Roussel", dist: "60m", hoursEn: "Open counter", hoursFr: "Comptoir libre", specFr: "Bourriche d’huîtres ouvertes sur le trottoir le matin. Vin tiré directement de la cuve dans des bouteilles consignées.", specEn: "Breton oysters shucked onto curb crates. Natural wine gravity-poured from oak barrels into refillable carafes.", detailsEn: "No booking · Barrel tasting", detailsFr: "Sans réservation · Dégustation sur tonneau" }
+];
+const EVENTS = [
+  { id: "bach", time: "20:30 · 21 NOVEMBRE", titleFr: "Suites pour Violoncelle Seul (J.S. Bach)", titleEn: "Unaccompanied Cello Suites by Candlelight", venue: "Église Saint-Éphrem (Ve Arr.)", descFr: "Nef acoustique en pierre du XVIIe siècle. Éclairage exclusif à la bougie. 45 chaises de bois.", action: "HOLD 4 SEATS", done: "4 SEATS HELD" },
+  { id: "vernissage", time: "18:00 · 23 NOVEMBRE", titleFr: "Vernissage : Typographie & Épreuves d’Artiste", titleEn: "Vernissage: Typography & Silver Proofs", venue: "Galerie d’Estampes (Rue Charlot, IIIe)", descFr: "Portes de la cour cochère grandes ouvertes. Tirages argentiques noir et blanc, vin servi au gobelet Duralex.", action: "ADD TO DRIFT", done: "ADDED TO DRIFT" }
+];
+const SCENES = {
+  "dehillerin": "radial-gradient(circle at 30% 38%, #f6b26b 0 9%, #b45309 10% 17%, transparent 18%), radial-gradient(circle at 70% 30%, #fcd34d 0 6%, #c2410c 7% 13%, transparent 14%), radial-gradient(circle at 58% 64%, #fdba74 0 11%, #9a3412 12% 20%, transparent 21%), repeating-linear-gradient(90deg, #1c1917 0 46px, #292524 46px 50px), linear-gradient(#292524, #0c0a09)",
+  "chez-denise": "radial-gradient(ellipse at 50% 30%, rgba(253,224,71,.35), transparent 55%), repeating-conic-gradient(#991b1b 0 25%, #f5f5f4 0 50%) 0 0/56px 56px",
+  "doursoux": "repeating-linear-gradient(45deg, rgba(255,255,255,.06) 0 2px, transparent 2px 7px), repeating-linear-gradient(0deg, #3f3f46 0 6px, transparent 6px 150px), linear-gradient(160deg, #1e3a8a, #172554 55%, #44403c)",
+  "baron-rouge": "radial-gradient(circle at 25% 55%, transparent 0 18%, #451a03 18.5% 20%, transparent 20.5% 30%, #451a03 30.5% 32%, transparent 32.5%), radial-gradient(circle at 75% 55%, transparent 0 18%, #451a03 18.5% 20%, transparent 20.5% 30%, #451a03 30.5% 32%, transparent 32.5%), linear-gradient(#7f1d1d, #3b0a0a 60%, #78716c)",
+  "pluie": "radial-gradient(ellipse at 50% 0%, rgba(254,243,199,.45), transparent 50%), repeating-linear-gradient(90deg, rgba(0,0,0,.55) 0 3px, transparent 3px 60px), repeating-radial-gradient(ellipse at 50% -20%, transparent 0 40px, rgba(255,255,255,.08) 40px 42px), linear-gradient(#44403c, #1c1917 70%)",
+  "oeil": "radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px) 0 0/6px 6px, linear-gradient(135deg, #1f2a24, #0f1512 60%, #3f2d1d)"
+};
+
+
+
+// Your own photos, per view. Falls back to the drawn scene if a file is missing.
+const IMG = {
+  "chez-denise": { walk: "img/denise-street.jpg", read: "img/denise-street.jpg", dossier: "img/denise-street.jpg", pos: { read: "center 45%", dossier: "center 42%" } },
+  "baron-rouge": { walk: "img/baron-street.webp", read: "img/baron-barrels.webp", dossier: "img/baron-barrels.webp", pos: { walk: "50% center" } },
+  "doursoux": { walk: "img/doursoux-street.jpg", read: "img/doursoux-inside.jpg", dossier: "img/doursoux-inside.jpg", pos: { walk: "8% center", read: "center 35%", dossier: "center 30%" } },
+  "pluie": { rain: "img/panoramas.jpg", pos: { rain: "center 40%" } },
+  "oeil": { lens: "img/lens-menu.jpg", pos: { lens: "left center" } },
+  "dehillerin": { walk: "img/dehillerin-street.jpg", read: "img/dehillerin-sign.jpg", dossier: "img/dehillerin-copper.jpg", pos: { dossier: "center 78%" },
+    inside: [["img/dehillerin-counter.jpg", "The counter, with portraits of the Dehillerin family"], ["img/dehillerin-moulds.jpg", "Shelves of baking moulds, priced by hand"], ["img/dehillerin-copper.jpg", "Copper pans, tin-lined"]] }
+};
+const params = new URLSearchParams(location.search);
+let seen = false;
+try { seen = localStorage.getItem("dd-onboarded") === "1"; } catch (e) {}
+const S = { screen: (seen && params.get("intro") !== "1") ? "courant" : "intro1", spot: 0, held: {}, paradigm: params.get("mode") === "derive" ? "derive" : "drift" };
+S.rain = params.get("rain") === "1";
+const finishIntro = () => { try { localStorage.setItem("dd-onboarded", "1"); } catch (e) {} };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const bi = (en, fr, size, frSize) => `<span style="font-size:${size}px">${esc(en)}</span> <span class="fr" style="font-size:${frSize}px">${esc(fr)}</span>`;
+const scene = (id, filter, label, view) => { const src = view && IMG[id] && IMG[id][view]; return `<div class="fill" role="img" aria-label="${esc(label)}" style="background:${src ? `url('${src}') ${(IMG[id].pos && IMG[id].pos[view]) || "center"}/cover no-repeat, ` : ""}${SCENES[id]};filter:${filter}"></div>`; };
+
+const WALK = {
+  "dehillerin": { bearing: 45, distM: 110, dirEn: "Head north-east along Rue Coquillière", dirFr: "Rue Coquillière, vers le nord-est", history: "Founded in 1820 and still supplying professional kitchens. Shelves run floor to ceiling, and staff fetch pieces down by hand." },
+  "chez-denise": { bearing: 300, distM: 180, dirEn: "Walk west past Saint-Eustache", dirFr: "Vers l’ouest, après Saint-Eustache", history: "A holdover from the old Les Halles market, when porters and butchers ate here through the night. It still keeps market-hours." },
+  "doursoux": { bearing: 205, distM: 340, dirEn: "Follow Boulevard de Vaugirard south-west", dirFr: "Boulevard de Vaugirard, vers le sud-ouest", history: "A long-running army-surplus shop. Stock changes as old uniform issues come in, so what’s on the rails is never the same twice." },
+  "baron-rouge": { bearing: 120, distM: 60, dirEn: "Cut east toward the Marché d’Aligre", dirFr: "Vers l’est, direction marché d’Aligre", history: "A neighbourhood wine bar beside the Aligre market. On market mornings, oysters are opened on the pavement outside." }
+};
+S.remaining = WALK[SPOTS[S.spot].id].distM;
+
+function topBar(sp, derive) {
+  const ink = derive ? "#111" : "#e5e5e5";
+  const chip = derive ? "rgba(0,0,0,.07)" : "rgba(255,255,255,.08)";
+  return `<div class="abs" style="top:36px;left:20px;right:20px;z-index:30;display:flex;justify-content:space-between;align-items:center;color:${ink}">
+    <div style="display:flex;align-items:center;gap:8px;white-space:nowrap"><button data-mode="1" aria-label="Switch to ${derive ? "Drift, the walking view" : "Dérive, the reading view"}" style="font-size:24px;letter-spacing:1.1px;text-transform:uppercase;padding:6px 8px 2px;margin-left:-8px;border-radius:6px;background:${chip}">${derive ? "dérive" : "drift"} ⇄</button><span style="font-size:24px">${derive ? "Read" : "Walk"} <span class="fr" style="font-size:18px">${derive ? "Lire" : "Marcher"}</span></span></div>
+    <div style="display:flex;align-items:center;gap:6px;white-space:nowrap">
+      <button data-act="weather" aria-label="Weather: ${S.rain ? "raining" : "sunny"}. Tap to switch for the demo." style="font-size:24px;background:${derive ? "transparent" : (S.rain ? "rgba(12,42,58,.85)" : "rgba(0,0,0,.6)")};padding:4px 8px 2px;border-radius:4px;border:1px solid ${derive ? "rgba(0,0,0,.25)" : (S.rain ? "#0ea5e9" : "rgba(255,255,255,.2)")};color:${derive ? "#111" : (S.rain ? "#7dd3fc" : "#e5e5e5")}">${S.rain ? "☂ 8°C · Rain" : "☀ 11°C"}</button>
+      <button data-go="intro1" aria-label="How it works" style="width:30px;height:30px;border-radius:999px;border:1px solid ${derive ? "rgba(0,0,0,.3)" : "rgba(255,255,255,.35)"};background:${derive ? "transparent" : "rgba(0,0,0,.6)"};display:flex;align-items:center;justify-content:center;font-size:24px;padding-top:4px">?</button>
+    </div>
+  </div>`;
+}
+
+function dots(dark) {
+  return `<div style="display:flex;justify-content:center;align-items:center;gap:2px">
+    ${SPOTS.map((s, i) => `<button data-spot="${i}" aria-label="${esc(s.name)}" style="height:28px;padding:0 5px;display:flex;align-items:center"><span style="display:block;height:6px;border-radius:999px;width:${i === S.spot ? 24 : 6}px;background:${i === S.spot ? (dark ? "#111" : "#fff") : (dark ? "rgba(0,0,0,.25)" : "rgba(255,255,255,.4)")};transition:width .2s"></span></button>`).join("")}
+  </div>`;
+}
+
+function courant(sp, derive) { return derive ? reading(sp) : walking(sp); }
+
+function walking(sp) {
+  const w = WALK[sp.id], here = S.remaining <= 0;
+  return `<div class="fill">
+  ${scene(sp.id, "contrast(1.05)", sp.name, "walk")}
+  <div class="fill" style="background:linear-gradient(to top,#000 8%,rgba(0,0,0,.35) 45%,rgba(0,0,0,.7))"></div>
+  ${topBar(sp, false)}
+  ${S.rain ? `<button data-act="dry" style="position:absolute;top:84px;left:16px;right:16px;z-index:25;display:flex;justify-content:space-between;align-items:center;gap:8px;background:rgba(12,42,58,.92);border:1px solid #0ea5e9;border-radius:14px;padding:10px 14px 6px">
+    <span style="display:flex;flex-direction:column;gap:2px;text-align:left"><span style="font-size:26px;color:#fff">☂ Rain starting · take the covered route</span><span class="fr" style="font-size:18px;color:#7dd3fc">Il commence à pleuvoir</span></span>
+    <span style="font-size:28px;color:#7dd3fc">→</span></button>` : ""}
+  <div class="abs" style="top:${S.rain ? 168 : 118}px;left:20px;right:20px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+    ${here
+      ? `<div style="width:120px;height:120px;border-radius:999px;background:#fbbf24;color:#000;display:flex;align-items:center;justify-content:center;font-size:80px;padding-top:10px;box-sizing:border-box">✓</div>
+         <div style="font-size:72px;line-height:52px;color:#fff">You’re here</div>
+         <div style="font-size:27px;color:#d4d4d4">Vous y êtes. Open the dossier to see what to look for.</div>`
+      : `<svg class="arrow" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true" style="transform:rotate(${w.bearing}deg)"><path d="M60 6 L102 106 L60 82 L18 106 Z" fill="#fbbf24"/></svg>
+         <div style="font-size:96px;line-height:64px;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.6)"><span id="dist">${Math.ceil(S.remaining)}</span><span style="font-size:48px">m</span></div>
+         <div style="display:flex;flex-direction:column;gap:4px;text-shadow:0 1px 10px rgba(0,0,0,.8)"><span style="font-size:29px;line-height:21px;color:#fff">${esc(w.dirEn)}</span><span class="fr" style="font-size:20px;color:#fff">${esc(w.dirFr)}</span></div>
+         <button data-go="poche" style="margin-top:6px;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.55);border-radius:999px;padding:10px 18px 6px;color:#fff"><span style="font-size:24px">PUT PHONE AWAY</span> <span class="fr" style="font-size:18px">Ranger le téléphone</span></button>`}
+  </div>
+  <div class="abs" style="bottom:132px;left:16px;right:16px;z-index:20;display:flex;flex-direction:column;gap:4px">
+    <button data-go="dossier" aria-label="Open dossier for ${esc(sp.name)}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(10,10,10,.88);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:14px 16px">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-size:20px;color:#fbbf24;text-transform:uppercase">${esc(sp.tagEn)}</span><span style="font-size:36px;line-height:26px;color:#fff">${esc(sp.name)}</span></div>
+      <span style="font-size:24px;color:#fff;white-space:nowrap">DOSSIER →</span>
+    </button>
+    ${dots(false)}
+  </div>
+  ${S.toast ? `<div class="abs" role="status" style="top:${S.rain ? 146 : 84}px;left:20px;right:20px;z-index:35;display:flex;justify-content:center"><span style="background:#fbbf24;color:#000;border-radius:999px;padding:8px 14px 4px;font-size:24px">${esc(S.toast)}</span></div>` : ""}
+  ${S.sheet ? `<div class="fill" style="z-index:60;background:rgba(0,0,0,.55);display:flex;align-items:flex-end">
+    <div role="dialog" aria-label="Reroute" style="width:100%;background:#171717;border-top:1px solid #333;border-radius:24px 24px 0 0;padding:20px 16px 24px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:32px;color:#fff">Reroute <span class="fr" style="font-size:22px">Bifurquer</span></span><button data-act="close" style="font-size:24px;color:#a3a3a3;padding:8px 0 4px">CANCEL</button></div>
+${S.rain ? `      <button data-act="dry" style="display:flex;flex-direction:column;gap:4px;background:#0c2a3a;border:1px solid #0ea5e9;border-radius:16px;padding:14px 16px 10px;text-align:left">
+        <span style="font-size:30px;color:#fff">☂ Stay dry <span class="fr" style="font-size:20px">À l’abri</span></span>
+        <span style="font-size:24px;color:#7dd3fc">It’s raining. Take the covered route through the arcades.</span>
+      </button>
+` : ""}
+      <button data-act="other" style="display:flex;flex-direction:column;gap:4px;background:#262626;border-radius:16px;padding:14px 16px 10px;text-align:left">
+        <span style="font-size:30px;color:#fff">⤳ Somewhere else <span class="fr" style="font-size:20px">Ailleurs</span></span>
+        <span style="font-size:24px;color:#a3a3a3">Next place nearby: ${esc(SPOTS[(S.spot + 1) % SPOTS.length].name.split(" (")[0])} · ${esc(SPOTS[(S.spot + 1) % SPOTS.length].dist)}</span>
+      </button>
+    </div></div>` : ""}
+  </div>`;
+}
+
+function reading(sp) {
+  const w = WALK[sp.id], n = S.spot + 1;
+  return `<div class="fill" style="background:#efece6;color:#111;overflow-y:auto">
+  ${topBar(sp, true)}
+  <div style="padding:88px 20px 32px;display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #111;padding-bottom:6px">
+      <span style="font-size:20px;letter-spacing:.1em">MONOGRAPH <span class="fr" style="font-size:15px">MONOGRAPHIE</span></span>
+      <span style="font-size:20px">No. ${n} / ${SPOTS.length}</span>
+    </div>
+    <div style="position:relative;height:230px;border-radius:4px;overflow:hidden">
+      ${scene(sp.id, "grayscale(1) contrast(1.2)", sp.name, "read")}
+      <div class="abs" style="left:10px;bottom:10px;background:#fff;color:#000;font-size:22px;padding:4px 8px 2px;text-transform:uppercase">${esc(sp.arr)} · ${esc(sp.dist)}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:22px;color:#6b5200;text-transform:uppercase">${esc(sp.tagEn)} <span class="fr" style="font-size:17px">${esc(sp.tagFr)}</span></span>
+      <h1 style="margin:0;font-size:52px;line-height:38px;font-weight:700;text-transform:uppercase;letter-spacing:-.02em">${esc(sp.name)}</h1>
+    </div>
+    <p style="margin:0;font-size:30px;line-height:22px">${esc(sp.specEn)}</p>
+    <p class="serif" style="margin:0;font-size:13px;color:#4a4a4a">${esc(sp.specFr)}</p>
+    ${IMG[sp.id] && IMG[sp.id].inside ? `<div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:20px;letter-spacing:.1em;color:#4a4a4a">INSIDE <span class="fr" style="font-size:15px">À L’INTÉRIEUR</span></span>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">${IMG[sp.id].inside.map(([src, alt]) => `<img src="${src}" alt="${esc(alt)}" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:3px;filter:grayscale(1) contrast(1.1)">`).join("")}</div>
+    </div>` : ""}
+    <div style="border-top:1px solid rgba(0,0,0,.2);padding-top:12px;display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:20px;letter-spacing:.1em;color:#4a4a4a">HISTORY <span class="fr" style="font-size:15px">HISTOIRE</span></span>
+      <p style="margin:0;font-size:27px;line-height:20px">${esc(w.history)}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid rgba(0,0,0,.2);padding-top:12px">
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:18px;color:#4a4a4a">ADDRESS</span><span style="font-size:24px">${esc(sp.address)}</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:18px;color:#4a4a4a">HOURS</span><span style="font-size:24px">${esc(sp.hoursEn)}</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+      <button data-mode="1" style="min-height:52px;border-radius:999px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font-size:30px;padding-top:4px">WALK THERE · ${esc(sp.dist)}</span></button>
+      <button data-spot="${(S.spot + 1) % SPOTS.length}" style="min-height:48px;border-radius:999px;border:1.5px solid #111;display:flex;align-items:center;justify-content:center"><span style="font-size:26px;padding-top:4px">NEXT PLACE · ${esc(SPOTS[(S.spot + 1) % SPOTS.length].name.split(" (")[0])}</span></button>
+    </div>
+    ${dots(true)}
+  </div></div>`;
+}
+
+function pluie(derive) {
+  return `<div class="fill" style="background:#0a0a0a">
+  ${scene("pluie", derive ? "grayscale(1) contrast(1.5)" : "brightness(.9)", "Passage des Panoramas, the covered arcade", "rain")}
+  <div class="fill" style="background:repeating-linear-gradient(100deg,transparent 0 14px,rgba(186,230,253,.16) 14px 15px,transparent 15px 31px)"></div>
+  <div class="fill" style="background:linear-gradient(to top,#000,rgba(0,0,0,.4),rgba(0,0,0,.8))"></div>
+  <div class="abs" style="top:30px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <span style="color:#38bdf8">${bi("REROUTE · RAIN", "BIFURCATION · AVERSE", 24, 18)}</span>
+    <button data-go="courant" style="font-size:24px;text-decoration:underline;color:#a3a3a3;padding:10px 0">CLOSE</button>
+  </div>
+  <div class="abs" style="top:84px;left:20px;right:20px;display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+    <div style="background:#0ea5e9;color:#000;padding:4px 8px 2px">${bi("SHELTER", "COUVERTURE IMMÉDIATE", 24, 18)}</div>
+    <h2 style="margin:0;font-size:44px;line-height:32px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:-.02em">Passage des Panoramas</h2>
+    <p class="serif" style="margin:0;font-weight:400;font-size:12px;color:#d4d4d4">Verrière de 1799. Sol sec, librairies philatéliques et comptoirs chauffés.</p>
+    <span style="font-size:18px;color:rgba(255,255,255,.75)">Photo © Frédéric Baclet</span>
+  </div>
+  <div class="abs" style="bottom:84px;left:16px;right:16px;z-index:20">
+    <div style="background:rgba(0,0,0,.9);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+      <div style="color:#a3a3a3;letter-spacing:.1em">${bi("DRY DRIFT LEGS (80M)", "ITINÉRAIRE À SEC", 20, 15)}</div>
+      <div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:29px;line-height:20px;color:#e5e5e5">1. Entrée Rue Vivienne (Abri immédiat)</div><div style="font-size:27px;line-height:18px;color:#a3a3a3">Dry entrance 80m ahead</div></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:29px;line-height:20px;color:#e5e5e5">2. Liaison vers Jouffroy &amp; Verdeau</div><div style="font-size:27px;line-height:18px;color:#a3a3a3">Continuous sheltered crossing toward 9e Arr.</div></div>
+      <button data-go="courant" style="text-align:center;margin-top:4px;padding:14px 0 10px;background:#0ea5e9;color:#000;font-size:24px;border-radius:12px">START ROUTE</button>
+    </div>
+  </div></div>`;
+}
+
+function dossier(sp, derive) {
+  return `<div class="fill" style="background:#0a0a0a;overflow-y:auto;padding-bottom:84px;box-sizing:border-box">
+  <div style="position:relative;height:256px">
+    ${scene(sp.id, derive ? "grayscale(1) contrast(1.25)" : "contrast(1.05)", sp.name, "dossier")}
+    <div class="fill" style="background:linear-gradient(to top,#0a0a0a,rgba(10,10,10,.2),rgba(0,0,0,.7))"></div>
+    <button data-go="courant" style="position:absolute;top:30px;left:20px;font-size:24px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);padding:10px 16px 6px;border-radius:999px;color:#fff">← BACK</button>
+    <div class="abs" style="bottom:12px;left:20px;right:20px;display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;flex-direction:column;gap:2px;text-transform:uppercase;color:#fbbf24"><span style="font-size:24px">${esc(sp.tagEn)}</span><span class="fr" style="font-size:18px">${esc(sp.tagFr)}</span></div>
+      <h1 style="margin:0;font-size:44px;line-height:32px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:-.02em">${esc(sp.name)}</h1>
+    </div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+    <div style="background:#171717;border:1px solid #262626;padding:12px;border-radius:12px;display:flex;flex-direction:column;gap:6px">
+      <div style="color:#a3a3a3">${bi("LOCATION & ACCESS", "LOCALISATION & ACCÈS", 20, 15)}</div>
+      <div style="font-size:24px;color:#fff">${esc(sp.address)} (${esc(sp.arr)})</div>
+      <div style="color:#34d399">${bi(sp.hoursEn, sp.hoursFr, 24, 18)}</div>
+    </div>
+    <div style="background:rgba(23,23,23,.6);border:1px solid #262626;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px">
+      <div style="color:#a3a3a3">${bi("CRAFT SPEC", "DOSSIER MATIÈRE", 20, 15)}</div>
+      <p style="margin:0;font-size:27px;line-height:19px;color:#e5e5e5">${esc(sp.specEn)}</p>
+      <p class="serif" style="margin:0;padding-top:8px;border-top:1px solid #262626;font-weight:400;font-size:12px;color:#a3a3a3">${esc(sp.specFr)}</p>
+    </div>
+    <div style="background:#000;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="color:#a3a3a3">${bi("NOTE", "INDICATION", 20, 15)}</div>
+        <div style="font-size:24px;color:#fff">${esc(sp.detailsEn)}</div>
+        <div class="fr" style="font-size:18px;color:#fff">${esc(sp.detailsFr)}</div>
+      </div>
+      <button data-go="courant" style="padding:12px 14px 8px;background:#fff;color:#000;border-radius:8px;font-size:24px">CLOSE</button>
+    </div>
+  </div></div>`;
+}
+
+function cahier() {
+  return `<div class="fill" style="background:#0a0a0a;padding:40px 20px 84px;box-sizing:border-box;overflow-y:auto;display:flex;flex-direction:column;gap:16px">
+  <div style="border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:8px;display:flex;flex-direction:column;gap:6px">
+    <span style="color:#a3a3a3;letter-spacing:.1em">${bi("THIS WEEK", "CETTE SEMAINE", 20, 15)}</span>
+    <h1 style="margin:0;font-size:44px;line-height:32px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:-.02em">20–28 Novembre</h1>
+  </div>
+  ${EVENTS.map(e => { const on = !!S.held[e.id]; return `<div style="background:#171717;border:1px solid #262626;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-size:24px;color:#fbbf24">${esc(e.time)}</span><span style="font-size:20px;color:#a3a3a3;text-align:right">${esc(e.venue)}</span></div>
+    <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:33px;line-height:22px;font-weight:700;color:#fff">${esc(e.titleFr)}</h2><div style="font-size:27px;line-height:18px;color:#a3a3a3">${esc(e.titleEn)}</div></div>
+    <p class="serif" style="margin:0;font-weight:400;font-size:12px;color:#d4d4d4">“${esc(e.descFr)}”</p>
+    <button data-hold="${e.id}" aria-pressed="${on}" style="text-align:center;padding:14px 0 10px;border-radius:12px;font-size:24px;background:${on ? "#fbbf24" : "#f5f5f5"};color:#000">${on ? e.done : e.action}</button>
+  </div>`; }).join("")}
+  </div>`;
+}
+
+function oeil() {
+  return `<div class="fill" style="background:#000">
+  ${scene("oeil", "contrast(1.1)", "Viewfinder on a bistro chalkboard menu", "lens")}
+  <div class="fill" style="background:rgba(0,0,0,.3)"></div>
+  <div class="abs" style="top:34px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:24px;color:#34d399;background:rgba(0,0,0,.6);padding:4px 8px 2px;border-radius:4px;border:1px solid rgba(255,255,255,.2)">SCANNING 60FPS</span>
+    <span style="font-size:24px;color:#d4d4d4">ISO 400 · 1/125s</span>
+  </div>
+  <div class="abs" aria-hidden="true" style="left:20px;top:162px;width:350px;height:54px;border:2px dashed #fbbf24;border-radius:10px;box-shadow:0 0 0 2000px rgba(0,0,0,.35)"></div>
+  <div class="abs" style="left:20px;top:226px;width:350px;box-sizing:border-box;background:rgba(0,0,0,.88);border:1px solid #fbbf24;border-radius:12px;padding:12px 14px 8px;display:flex;flex-direction:column;gap:6px">
+    <span style="align-self:flex-start;background:#fbbf24;color:#000;padding:4px 6px 2px">${bi("MENU SCAN", "OCR ARDOISE", 22, 17)}</span>
+    <div><div style="font-size:29px;color:#fff">Porcini mushroom soup, with croutons</div><div class="fr" style="font-size:20px;color:#fff">Velouté de cèpes et ses émincés, croûtons aillés</div></div>
+    <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:6px"><div style="font-size:29px;color:#fff">Homemade rabbit terrine, onion jam</div><div class="fr" style="font-size:20px;color:#fff">Terrine de lapin maison, confiture d’oignons</div></div>
+  </div>
+  <div class="abs" style="left:24px;right:24px;bottom:84px;background:rgba(0,0,0,.85);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px">
+    <div style="color:#fbbf24">${bi("SET MENU", "FORMULE", 24, 18)}</div>
+    <div style="font-size:24px;color:#fff">Starter + main, or main + dessert · 26,90 €</div>
+    <div style="font-size:20px;color:#a3a3a3">Entrée + plat ou plat + dessert · prices include service</div>
+  </div></div>`;
+}
+
+function poche() {
+  const sp = SPOTS[S.spot], w = WALK[sp.id], here = S.remaining <= 0;
+  const now = new Date();
+  const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  const date = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+  return `<button data-go="courant" data-wake="1" aria-label="Tap to wake and return to the walk" style="position:absolute;inset:0;background:linear-gradient(#171717,#000);padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+  <div style="padding-top:48px;text-align:center;display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:20px;color:#a3a3a3;letter-spacing:.1em;text-transform:uppercase">${esc(date)}</div>
+    <div style="font-size:96px;line-height:64px;color:#fff;letter-spacing:-.04em">${time}</div>
+  </div>
+  <div id="live" class="${S.pulse ? "pulse" : ""}" style="background:rgba(23,23,23,.95);border:1px solid #404040;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 40px rgba(0,0,0,.6);text-align:left">
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #262626;padding-bottom:8px">
+      <span style="font-size:24px;color:#fff">DÉRIVE &amp; DRIFT · ${esc(sp.arr.replace("Arrondissement", "Arr."))}</span>
+      <span style="font-size:20px;color:#a3a3a3">${time}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      ${here
+        ? `<div style="width:52px;height:52px;flex-shrink:0;border-radius:18px;background:#fbbf24;color:#000;display:flex;align-items:center;justify-content:center;font-size:36px;padding-top:6px;box-sizing:border-box">✓</div>
+           <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="font-size:34px;line-height:24px;color:#fff">You’re here</div><div style="font-size:24px;color:#a3a3a3">Vous y êtes · tap to open the app</div></div>`
+        : `<div style="width:52px;height:52px;flex-shrink:0;border-radius:18px;background:#262626;display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 120 120" aria-hidden="true" style="transform:rotate(${w.bearing}deg)"><path d="M60 6 L102 106 L60 82 L18 106 Z" fill="#fbbf24"/></svg></div>
+           <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="font-size:34px;line-height:24px;color:#fff"><span id="pdist">${Math.ceil(S.remaining)}</span>m · ${esc(w.dirEn)}</div><div class="fr" style="font-size:20px;color:#fff">${esc(w.dirFr)}</div></div>`}
+    </div>
+    <div style="background:rgba(0,0,0,.6);border-radius:12px;padding:10px 10px 6px;display:flex;justify-content:space-between;gap:8px"><span style="font-size:24px;color:#fff">${esc(sp.name.split(" (")[0])}</span><span style="font-size:24px;color:#34d399;white-space:nowrap">${esc(sp.hoursEn)}</span></div>
+  </div>
+  <div style="padding-bottom:16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px">
+    <span style="font-size:22px;color:#a3a3a3">Phone away. You’ll feel a buzz before each turn.</span>
+    <div style="width:112px;height:4px;background:rgba(255,255,255,.4);border-radius:999px"></div>
+    <span style="color:#a3a3a3;text-transform:uppercase">${bi("Tap to wake", "Toucher pour réveiller", 20, 15)}</span>
+  </div></button>`;
+}
+
+function introFrame(step, inner, primary, secondary) {
+  return `<div class="fill" style="background:#000">
+  <div class="fill" role="img" aria-label="A Paris street corner, rue Coquillière" style="background:url('img/dehillerin-street.jpg') center/cover no-repeat, ${SCENES.pluie};filter:brightness(.55)"></div>
+  <div class="fill" style="background:linear-gradient(to bottom,rgba(0,0,0,.35),rgba(0,0,0,.55) 35%,#000 78%)"></div>
+  <div class="abs" style="top:30px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:center">
+    <span style="color:#fbbf24">${bi("HOW IT WORKS · " + step + "/2", "COMMENT ÇA MARCHE", 24, 18)}</span>
+    <button data-go="courant" data-finish="1" style="font-size:24px;color:#a3a3a3;padding:10px 0;text-decoration:underline">SKIP</button>
+  </div>
+  <div class="abs" style="top:84px;left:24px;right:24px;bottom:24px;display:flex;flex-direction:column;gap:18px">
+    ${inner}
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:center;gap:8px">${[1, 2].map(i => `<span style="display:block;height:6px;border-radius:999px;width:${i === step ? 24 : 6}px;background:${i === step ? "#fff" : "rgba(255,255,255,.4)"}"></span>`).join("")}</div>
+      ${primary}
+      ${secondary || ""}
+    </div>
+  </div></div>`;
+}
+
+function intro1() {
+  const sp = SPOTS[0];
+  return introFrame(1, `
+    <h1 style="margin:0;font-size:56px;line-height:40px;font-weight:700;color:#fff;letter-spacing:-.02em">One good place<br>at a time</h1>
+    <p style="margin:0;font-size:29px;line-height:21px;color:#d4d4d4">Drift shows the nearest place worth walking to. Head toward it, or let it go and see what comes next.</p>
+    <p class="serif" style="margin:0;font-size:12px;color:#a3a3a3">Laissez-vous porter par la ville, une adresse à la fois.</p>
+    <div style="position:relative;margin-top:6px">
+      <div style="display:flex;flex-direction:column;gap:8px;background:rgba(10,10,10,.9);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:20px;color:#fbbf24;text-transform:uppercase">${esc(sp.tagEn)}</span><span style="font-size:34px;line-height:24px;color:#fff">${esc(sp.name)}</span></div>
+          <span style="font-size:22px;background:rgba(255,255,255,.1);padding:4px 8px 2px;border-radius:4px;color:#d4d4d4">${esc(sp.dist)}</span>
+        </div>
+        <div style="display:flex;justify-content:flex-end;font-size:22px;color:#fff">DOSSIER →</div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:8px;margin-top:10px"><span style="display:block;width:24px;height:6px;border-radius:999px;background:#fff"></span><span style="display:block;width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.4)"></span><span style="display:block;width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.4)"></span><span style="display:block;width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.4)"></span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:24px;color:#000;background:#fbbf24;border-radius:999px;min-width:26px;text-align:center;padding:4px 0 0">1</span><span style="font-size:27px;line-height:19px;color:#e5e5e5">Tap the card for the full dossier: address, hours, what to look for.</span></div>
+      <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:24px;color:#000;background:#fbbf24;border-radius:999px;min-width:26px;text-align:center;padding:4px 0 0">2</span><span style="font-size:27px;line-height:19px;color:#e5e5e5">Tap the dots to step to the next place nearby.</span></div>
+    </div>`,
+    `<button data-go="intro2" style="min-height:52px;border-radius:999px;background:#fff;color:#000;display:flex;align-items:center;justify-content:center"><span style="font-size:32px;padding-top:4px">NEXT</span></button>`);
+}
+
+function intro2() {
+  const row = (chip, en, fr) => `<div style="display:flex;gap:12px;align-items:center">
+      ${chip}
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:26px;line-height:18px;color:#e5e5e5">${en}</span><span class="fr" style="font-size:18px;color:#e5e5e5">${fr}</span></div>
+    </div>`;
+  const tab = l => `<span style="flex:none;width:92px;text-align:center;font-size:20px;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:12px 0 8px">${l}</span>`;
+  return introFrame(2, `
+    <h1 style="margin:0;font-size:56px;line-height:40px;font-weight:700;color:#fff;letter-spacing:-.02em">Change course<br>anytime</h1>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      ${row(`<span style="flex:none;width:92px;text-align:center;font-size:22px;color:#000;background:#fff;border-radius:999px;padding:12px 0 8px">⤳ REROUTE</span>`, "While walking: switch to another place nearby, or a covered route if it’s raining.", "Une autre direction, à l’abri s’il pleut.")}
+      ${row(tab("DRIFT"), "The current: your next place.", "Le courant")}
+      ${row(`<span style="flex:none;width:92px;text-align:center;font-size:20px;color:#7dd3fc;border:1px solid #0ea5e9;background:rgba(12,42,58,.85);border-radius:14px;padding:12px 0 8px">☂ RAIN</span>`, "If it starts raining, a covered route through the arcades appears on its own.", "S’il pleut, un itinéraire à l’abri")}
+      ${row(tab("LENS"), "Point at a menu or shop front to read it in English.", "L’œil : menus et façades")}
+      ${row(tab("THIS WEEK"), "Concerts and openings near your walk.", "Cette semaine")}
+      ${row(`<span style="flex:none;width:92px;text-align:center;font-size:18px;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:12px 0 8px">PHONE AWAY</span>`, "Mid-walk, pocket the phone. Turns move to your lock screen, with a buzz before each one.", "Ranger le téléphone")}
+    </div>
+    <p style="margin:0;font-size:24px;line-height:18px;color:#a3a3a3">Two views: <span style="color:#fff">DRIFT</span> walks you there; <span style="color:#fff">DÉRIVE</span> is a guidebook page to read. Tap <span style="color:#fff">⇄</span> at the top to switch.</p>`,
+    `<button data-go="courant" data-finish="1" style="min-height:52px;border-radius:999px;background:#fff;color:#000;display:flex;align-items:center;justify-content:center"><span style="font-size:32px;padding-top:4px">START DRIFTING</span></button>`,
+    `<button data-go="intro1" style="align-self:center;font-size:24px;color:#a3a3a3;padding:8px 16px 4px">← BACK</button>`);
+}
+
+function chrome() {
+  const tabs = [["courant", "DRIFT"], ["oeil", "LENS"], ["cahier", "THIS WEEK"]];
+  const walking = S.screen === "courant" && S.paradigm === "drift";
+  return `<div class="abs" style="left:12px;right:12px;bottom:16px;z-index:40;display:flex;flex-direction:column;gap:12px">
+    ${walking ? `<button data-act="sheet" aria-haspopup="dialog" style="min-height:52px;border-radius:999px;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 20px rgba(0,0,0,.5)"><span style="font-size:24px">⤳</span><span style="font-size:32px;padding-top:4px">REROUTE</span></button>` : ""}
+    <nav aria-label="Navigation" style="background:rgba(10,10,10,.92);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:4px;display:flex;align-items:center;gap:2px;box-shadow:0 20px 40px rgba(0,0,0,.6)">
+      ${tabs.map(([id, label]) => { const a = S.screen === id; return `<button data-go="${id}" ${a ? 'aria-current="page"' : ""} style="flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;padding-top:4px;border-radius:18px;font-size:20px;background:${a ? "rgba(255,255,255,.08)" : "transparent"};color:${a ? "#fff" : "#a3a3a3"}">${label}</button>`; }).join("")}
+    </nav></div>`;
+}
+
+const phone = document.getElementById("phone");
+function render() {
+  const sp = SPOTS[S.spot], derive = S.paradigm === "derive";
+  const body = { courant: () => courant(sp, derive), pluie: () => pluie(derive), dossier: () => dossier(sp, derive), cahier, oeil, poche, intro1, intro2 }[S.screen]();
+  phone.innerHTML = body + (["poche", "intro1", "intro2"].includes(S.screen) || (S.screen === "courant" && derive) ? "" : chrome());
+}
+phone.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.finish) finishIntro();
+  if (b.dataset.act) {
+    const a = b.dataset.act;
+    S.sheet = a === "sheet";
+    if (a === "other") {
+      S.spot = (S.spot + 1) % SPOTS.length; S.remaining = WALK[SPOTS[S.spot].id].distM;
+      S.toast = "New direction · " + SPOTS[S.spot].name.split(" (")[0];
+      clearTimeout(S.toastTimer); S.toastTimer = setTimeout(() => { S.toast = ""; if (S.screen === "courant") render(); }, 2600);
+    }
+    if (a === "dry") S.screen = "pluie";
+    if (a === "weather") { S.rain = !S.rain; S.toast = S.rain ? "Demo: it’s raining" : "Demo: sunny again"; clearTimeout(S.toastTimer); S.toastTimer = setTimeout(() => { S.toast = ""; if (S.screen === "courant") render(); }, 2000); }
+    render(); return;
+  }
+  if (b.dataset.mode) S.paradigm = S.paradigm === "drift" ? "derive" : "drift";
+  else if (b.dataset.go) { S.screen = b.dataset.go; S.sheet = false; }
+  else if (b.dataset.spot) { S.spot = +b.dataset.spot; S.remaining = WALK[SPOTS[S.spot].id].distM; }
+  else if (b.dataset.hold) S.held[b.dataset.hold] = !S.held[b.dataset.hold];
+  render();
+  const again = b.dataset.go ? phone.querySelector(`[data-go="${b.dataset.go}"][aria-current]`) : null;
+  if (again) again.focus();
+});
+document.addEventListener("keydown", e => { if (e.key === "d" || e.key === "D") { S.paradigm = S.paradigm === "drift" ? "derive" : "drift"; render(); } });
+function fit() {
+  const s = Math.min(1, (innerHeight - 32) / 844, (innerWidth - (innerWidth <= 430 ? 0 : 32)) / 390);
+  const small = innerWidth <= 430;
+  const scale = small ? Math.min(innerWidth / 390, innerHeight / 844) : s;
+  document.getElementById("stage").style.transform = `scale(${scale})`;
+}
+addEventListener("resize", fit);
+setInterval(() => {
+  const walking = S.screen === "courant" && S.paradigm === "drift";
+  if ((!walking && S.screen !== "poche") || S.remaining <= 0) return;
+  const total = WALK[SPOTS[S.spot].id].distM, before = S.remaining;
+  S.remaining = Math.max(0, S.remaining - 3);
+  // a "turn" halfway, and arrival: pulse the lock-screen card and vibrate where supported
+  const crossedTurn = before > total / 2 && S.remaining <= total / 2;
+  if (S.screen === "poche" && (crossedTurn || S.remaining <= 0)) {
+    try { navigator.vibrate && navigator.vibrate(S.remaining <= 0 ? [120, 80, 120, 80, 240] : [80, 60, 80]); } catch (e) {}
+    S.pulse = true; render(); setTimeout(() => { S.pulse = false; const c = document.getElementById("live"); if (c) c.classList.remove("pulse"); }, 1600);
+    return;
+  }
+  const el = document.getElementById(walking ? "dist" : "pdist");
+  if (S.remaining <= 0 || !el) render(); else el.textContent = Math.ceil(S.remaining);
+}, 1000);
+fit(); render();
+</script>
+</body>
+</html>
