@@ -238,3 +238,16 @@
 .person-top { display: flex; justify-content: space-between; align-items: flex-start; }
 .pgrade { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 1.5rem; font-weight: 500; box-shadow: inset 0 0 0 2px var(--action); }
 .pgrade.a { background: var(--action); color: var(--on-action); }
+
+/* hero report preview (no real business) */
+.preview { padding: 26px; display: flex; flex-direction: column; gap: 20px; font-family: var(--display); }
+.preview-top { display: flex; gap: 18px; align-items: center; }
+.preview-grade { flex: none; width: 84px; height: 84px; background: var(--action); color: var(--on-action); display: flex; align-items: center; justify-content: center; font-size: 3.25rem; font-weight: 500; }
+.preview-k { display: block; font-size: 1rem; color: var(--muted); margin-bottom: 4px; }
+.preview-top strong { font-size: 1.375rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+.preview-people { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
+.preview-people li { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--hair); font-size: 1rem; }
+.preview-people img { width: 44px; height: 44px; background: var(--paper); }
+.preview-people strong { font-weight: 600; }
+.preview-foot { display: flex; flex-wrap: wrap; gap: 8px; }
+.preview-foot span { font-size: 1rem; padding: 6px 12px; box-shadow: inset 0 0 0 1.5px var(--hair); }
