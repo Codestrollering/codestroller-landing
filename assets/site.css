@@ -35,7 +35,7 @@
   /* header */
   .site-head { position: relative; z-index: 2; background: var(--page); }
   .site-head .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 18px; padding-bottom: 18px; }
-  .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font-family: var(--display); font-weight: 600; font-size: 1.5625rem; letter-spacing: -0.03em; }
+  .brand { display: inline-flex; align-items: center; min-height: 44px; gap: 12px; text-decoration: none; color: var(--ink); font-family: var(--display); font-weight: 600; font-size: 1.5625rem; letter-spacing: -0.03em; }
   .brand:hover { color: var(--ink); }
   .nav { display: flex; align-items: center; gap: 36px; font-family: var(--display); }
   .nav a:not(.btn) { color: var(--ink); text-decoration: none; font-size: 1.0625rem; }
@@ -57,7 +57,7 @@
   .check-row input:focus-visible { outline-offset: -2px; }
   .check-row .btn { min-height: 60px; padding: 0 28px; font-size: 1.125rem; }
   .check .note { margin: 2px 0 0; font-size: 1rem; color: var(--muted); }
-  .check .alt { align-self: flex-start; font-size: 1.0625rem; font-weight: 500; }
+  .check .alt { align-self: flex-start; font-size: 1.0625rem; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center; }
   .figures { margin: 14px 0 0; padding-top: 28px; border-top: 1px solid var(--hair); display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 22px 32px; font-family: var(--display); }
   .figures div { display: flex; flex-direction: column-reverse; gap: 8px; }
   .figures dt { font-size: 1.0625rem; color: var(--text-2); line-height: 1.35; }
@@ -196,7 +196,9 @@
   .foot-about p { margin: 0; font-family: var(--read); font-size: 1.1875rem; line-height: 1.5; color: var(--text-2); max-width: 34ch; }
   .foot-col { flex: 1 1 160px; display: flex; flex-direction: column; gap: 12px; font-size: 1rem; }
   .foot-col strong { font-weight: 600; }
-  .foot-col a { text-decoration: none; }
+  .foot-col a { text-decoration: none; min-height: 44px; display: flex; align-items: center; }
+  .foot-col { gap: 0 !important; }
+  .foot-col strong { margin-bottom: 4px; }
   .foot-col a:hover { text-decoration: underline; }
   .foot-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; border-top: 1px solid var(--hair); margin-top: 48px; padding-top: 24px; font-size: 1rem; color: var(--muted); }
 
@@ -205,11 +207,26 @@
   .head-links a:not(.btn) { color: var(--ink); text-decoration: none; font-size: 1.0625rem; min-height: 44px; display: inline-flex; align-items: center; }
   .head-links a:not(.btn):hover { text-decoration: underline; }
 
+  /* Portraits carry width/height for layout stability; CSS sets the shown size. */
+  img[src$="/maya.svg"], img[src$="/derek.svg"], img[src$="/elena.svg"] { aspect-ratio: 1 / 1; }
+
+  /* sample report: section tabs that stay with you */
+  .parts-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 5; background: var(--page); box-shadow: 0 10px 24px -18px rgba(28,27,24,.45); transform: translateY(-110%); transition: transform .2s ease; }
+  .parts-bar.show { transform: none; }
+  .parts-bar .wrap { padding-top: 10px; padding-bottom: 10px; }
+  .parts-bar .parts-nav { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .parts-bar .parts-nav a { white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+  .parts-nav a[aria-current="true"] { background: var(--action); color: var(--on-action); box-shadow: none; }
+  @media (prefers-reduced-motion: reduce) { .parts-bar { transition: none; } }
+  html { scroll-padding-top: 84px; }
+
   /* narrow screens */
   @media (max-width: 860px) {
     .nav { display: none; }
     .head-links { gap: 16px; }
     .head-links a[href="/#how"] { display: none; }
+    .parts-bar .parts-nav { gap: 6px; }
+    .parts-bar .parts-nav a { padding: 0 10px; font-size: 0.875rem; }
   }
   @media (max-width: 480px) {
     /* Phones: the header keeps only the main action; pricing stays one tap
