@@ -6,9 +6,9 @@
   document.documentElement.classList.add('motion');
 
   var groups = [
-    '.people', '.r-people', '.plans', '.ways-grid', '.keep', '.visits', '.frames', '.steps', '.features', '.figures', '.r-sum', '.mlist', '.preview-people'
+    '.people', '.r-people', '.plans', '.ways-grid', '.keep', '.visits', '.frames', '.steps', '.features', '.figures', '.r-sum', '.mlist', '.preview-people', '.agent-steps', '.agent-log ol'
   ];
-  var cards = '.person, .r-person, .plan, .way, .keep > div, .visit, .frame, .steps li, .feature, .figures > div, .verdict, .mlist li, .preview-people li, .compare, .browser, .wire, .faq, .platforms';
+  var cards = '.person, .r-person, .plan, .way, .keep > div, .visit, .frame, .steps li, .feature, .figures > div, .verdict, .mlist li, .preview-people li, .compare, .browser, .wire, .faq, .platforms, .agent-log';
   var seen = new Set();
   groups.forEach(function (g) {
     document.querySelectorAll(g).forEach(function (group) {
