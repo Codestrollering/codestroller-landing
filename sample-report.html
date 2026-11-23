@@ -114,15 +114,57 @@
     .mlist .sev { grid-column: 2; justify-self: start; }
     .verdict strong { font-size: 1.875rem; }
   }
+  /* The report as a document: a white sheet lifted off a tinted desk, like a downloaded PDF */
+  main { background: #e9e7e1; padding: 56px 0 72px; }
+  .sheet { width: min(1248px, calc(100% - 48px)); margin: 0 auto; background: var(--page);
+    box-shadow: 0 0 0 1px rgba(28,27,24,.06), 0 2px 4px rgba(28,27,24,.06), 0 18px 36px -12px rgba(28,27,24,.22), 0 50px 90px -30px rgba(28,27,24,.35); }
+  .sheet .wrap { padding-left: 56px; padding-right: 56px; }
+  .sheet .r-hero { box-shadow: none; padding-top: 64px; }
+  .sheet .band { box-shadow: none; border-top: 1px solid var(--hair); }
+  .sheet-end { display: flex; justify-content: space-between; gap: 16px; padding: 16px 56px; border-top: 1px solid var(--hair); font-family: var(--display); font-size: 0.875rem; color: var(--muted); }
+  main > .closing { margin: 72px 0 -72px; }
+  @media (max-width: 860px) {
+    main { padding: 20px 0 40px; }
+    .sheet { width: calc(100% - 20px); }
+    .sheet .wrap { padding-left: 20px; padding-right: 20px; }
+    .sheet-end { padding: 14px 20px; flex-direction: column; gap: 4px; }
+    main > .closing { margin: 40px 0 -40px; }
+  }
+  .r-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .r-download { gap: 10px; white-space: nowrap; }
+  .r-dl-meta { font-size: 0.8125rem; color: var(--muted); padding-left: 10px; border-left: 1px solid var(--hair); }
+  @media print {
+    @page { size: A4; margin: 14mm 12mm; }
+    html, body, main { background: #fff !important; }
+    .site-head, .site-foot, .parts-nav, .parts-bar, .closing, .r-download { display: none !important; }
+    main { padding: 0 !important; }
+    .sheet { width: auto !important; box-shadow: none !important; }
+    .sheet .wrap { padding-left: 0 !important; padding-right: 0 !important; max-width: none !important; }
+    .sheet .r-hero { padding-top: 0 !important; }
+    .band { padding: 40px 0 32px !important; break-before: page; border-top: 0 !important; }
+    .sheet-end { padding-left: 0 !important; padding-right: 0 !important; }
+    .visit, .way, .keep > div, .frame, .r-person, .verdict, .mlist li, .serves { break-inside: avoid; }
+    html { font-size: 12px; }
+    .r-sum { grid-template-columns: 1fr !important; }
+    .r-people { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+    .keep, .wf, .frames { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    .ways-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+    .visit { grid-template-columns: 200px minmax(0, 1fr) !important; }
+    .mlist li { grid-template-columns: 44px minmax(0, 1fr) auto !important; }
+    .mlist .sev { grid-column: auto !important; }
+    .r-hero h1 { font-size: 3.4rem !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
 </style>
 </head>
 <body>
 <header class="site-head"><div class="wrap"><a class="brand" href="/" aria-label="Codestroller home"><img src="/assets/mark.svg" alt="" width="36" height="36">codestroller</a><nav class="head-links" aria-label="Main"><a href="/#how">How a stroll works</a><a href="/#pricing">Pricing</a><a class="btn btn-ink btn-sm" style="white-space:nowrap" href="https://app.codestroller.com/stroll.html">Check my site</a></nav></div></header>
 
 <main>
+<article class="sheet" aria-label="Sample report">
 <section class="r-hero">
   <div class="wrap">
-    <span class="r-kicker">Sample report</span>
+    <div class="r-top"><span class="r-kicker">Sample report</span><a class="btn btn-line btn-sm r-download" href="/assets/codestroller-sample-report.pdf" download="Codestroller sample report - Larkspur and Fern.pdf"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download Sample Report<span class="r-dl-meta">PDF</span></a></div>
     <h1><span>Larkspur &amp; Fern,</span><span>as its customers see it</span></h1>
     <div class="r-meta"><span><b>Site</b> codestroller.com/demo/larkspur-and-fern</span><span><b>Benchmark</b> Bloom Street Flowers</span><span><b>Walked</b> 13 November 2026</span></div>
     <p class="r-fiction">Larkspur &amp; Fern is a fictional neighbourhood florist we built to show Codestroller at work, and Bloom Street Flowers is its fictional competitor. Everything below comes from a real Codestroll of those two sites: the grades, the customers’ own words, the measurements and the wireframes.</p>
@@ -270,6 +312,9 @@
     <p class="gap-note">The blanks are left for the owner. Codestroller only uses facts it finds on the site, so it won’t invent Larkspur &amp; Fern’s prices or reply times.</p>
   </div>
 </section>
+
+<footer class="sheet-end"><span>Codestroller report · Larkspur &amp; Fern</span><span>Walked 13 November 2026</span></footer>
+</article>
 
 <section class="closing">
   <div class="wrap">
