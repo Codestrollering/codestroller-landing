@@ -1,7 +1,22 @@
+// Persona stack: set who is in front; works with or without motion.
+window.__stack = function (st, frontIdx) {
+  var cards = Array.prototype.slice.call(st.querySelectorAll(':scope > .person')), n = cards.length;
+  var order = st._order || [cards[n - 1]].concat(cards.slice(0, n - 1));
+  if (frontIdx != null) { var c = cards[frontIdx]; order = [c].concat(order.filter(function (x) { return x !== c; })); }
+  st._order = order;
+  order.forEach(function (c, d) { if (!c.classList.contains('leaving') || d !== n - 1) c.setAttribute('data-depth', String(d)); });
+  var lg = st.parentNode.querySelector('.stack-legend');
+  if (lg) lg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(cards[+b.dataset.card] === order[0])); });
+};
 (function () {
   document.querySelectorAll('.people.stack').forEach(function (st) {
-    var cs = Array.prototype.slice.call(st.children), n = cs.length;
-    cs.forEach(function (c, i) { c.setAttribute('data-depth', String(n - 1 - i)); });
+    window.__stack(st);
+    var lg = st.parentNode.querySelector('.stack-legend');
+    if (lg) lg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (st._stop) st._stop();
+      window.__stack(st, +b.dataset.card);
+    });
   });
 })();
 // Motion for the theme trial: reveal-on-scroll with a stagger, count-up figures.
@@ -33,23 +48,37 @@
 
   // persona stack: rotate through all four cards twice, then settle on the AI agent
   document.querySelectorAll('.people.stack').forEach(function (st) {
-    var cards = Array.prototype.slice.call(st.children), n = cards.length;
-    // the agent card (last) starts in front, then Maya, Derek, Elena, agent: two loops back to the agent
-    var order = [cards[n - 1]].concat(cards.slice(0, n - 1));
-    order.forEach(function (c, d) { c.setAttribute('data-depth', String(d)); });
+    var n = st.querySelectorAll(':scope > .person').length;
     st.classList.add('reveal');
-    var steps = 2 * n, done = 0, timer = null;
+    var steps = 2 * n, done = 0, timer = null, stopped = false;
     function step() {
-      var front = order.shift(); order.push(front);
+      if (stopped) return;
+      var front = st._order[0];
       front.classList.add('leaving');
-      order.forEach(function (c, d) { if (c !== front) c.setAttribute('data-depth', String(d)); });
-      setTimeout(function () { front.setAttribute('data-depth', String(n - 1)); front.classList.remove('leaving'); }, 900);
+      st._order = st._order.slice(1).concat([front]);
+      window.__stack(st);
+      setTimeout(function () { front.classList.remove('leaving'); front.setAttribute('data-depth', String(n - 1)); }, 900);
       if (++done >= steps) { clearInterval(timer); }
     }
+    st._stop = function () { stopped = true; clearInterval(timer); };
     st._start = function () {
       if (st._started) return; st._started = true;
       setTimeout(function () { step(); timer = setInterval(step, 1500); }, 1100);
     };
+  });
+
+  // headline: customers, then those who send an AI assistant; twice, then back to customers
+  document.querySelectorAll('h1.rot').forEach(function (h) {
+    var flips = 0, hover = false;
+    h.addEventListener('mouseenter', function () { hover = true; });
+    h.addEventListener('mouseleave', function () { hover = false; });
+    setTimeout(function () {
+      var t = setInterval(function () {
+        if (hover) return;
+        h.classList.toggle('show-b');
+        if (++flips >= 4) clearInterval(t);
+      }, 3200);
+    }, 2200);
   });
 
   // count-up: animate the number, keep its final value for assistive tech
