@@ -237,3 +237,8 @@ main:has(> .sheet) { background: var(--paper) !important; }
 .rot-comma { font-style: normal; }
 .motion .rot-comma { display: none; }
 html:not(.motion) .hero h1.rot .rot-b > span:first-child::first-letter { text-transform: lowercase; }
+
+/* failing grade: red */
+:root { --fail: #C62F24; }
+.pgrade.f, .grade-big.f { background: var(--fail) !important; color: #fff !important; box-shadow: none !important; }
+.people.stack .agent-card[data-depth="0"] { box-shadow: 0 0 0 2px var(--fail), 0 34px 60px -28px rgba(9,15,5,.45) !important; }
