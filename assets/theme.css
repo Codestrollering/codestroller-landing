@@ -1,0 +1,112 @@
+/* Theme trial: sage / forest / lemongrass, mono labels, cut corners, motion.
+   Loaded last on every page; remove the one <link> to switch it off. */
+:root {
+  --page: #ffffff; --paper: #F4FAED; --ink: #090F05; --text-2: #2B3523; --muted: #4C5743;
+  --hair: #D3E0C4; --edge: #E1EBD5; --action: #18280E; --on-action: #ffffff;
+  --inverse: #18280E; --on-inverse: #ffffff; --walk: #4A5B38; --walk-on-dark: #B2EB76;
+  --lemon: #B2EB76; --olive: #4A5B38; --forest: #18280E;
+  --display: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --read: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --band-shadow: none;
+  --lift: 0 0 0 1px var(--hair), 0 18px 40px -30px rgba(9,15,5,.35);
+  --lift-high: 0 0 0 1px var(--hair), 0 30px 60px -34px rgba(9,15,5,.4);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --cut: polygon(17px 0, calc(100% - 17px) 0, 100% 17px, 100% calc(100% - 17px), calc(100% - 17px) 100%, 17px 100%, 0 calc(100% - 17px), 0 17px);
+}
+body { font-size: 1.125rem; line-height: 1.45; }
+::selection { background: var(--lemon); color: var(--ink); }
+h1 { font-weight: 560; letter-spacing: -0.035em; line-height: 1.04; }
+h2 { font-weight: 560; letter-spacing: -0.03em; }
+h3 { font-weight: 560; letter-spacing: -0.015em; }
+.lede, .part-intro { color: var(--text-2); }
+.band { box-shadow: none; border-top: 1px solid var(--hair); }
+
+/* mono labels: [ LIKE THIS ] */
+.kicker, .feature-text .kicker, .r-kicker, .preview-k, .verdict .k, .rec-label, .plan .rec-label, .way .eff, .compare-sub, .steps-n, .score-key, .caption, .platforms p, .r-meta, .foot-base, .sheet-end {
+  font-family: var(--mono) !important; font-size: 0.75rem !important; font-weight: 500 !important; letter-spacing: .11em; text-transform: uppercase;
+}
+.kicker, .feature-text .kicker, .r-kicker, .verdict .k { color: var(--olive); }
+.kicker::before, .feature-text .kicker::before, .r-kicker::before, .verdict .k::before { content: "[ "; }
+.kicker::after, .feature-text .kicker::after, .r-kicker::after, .verdict .k::after { content: " ]"; }
+.verdict .k { color: var(--lemon) !important; }
+.r-meta b { color: var(--ink); font-weight: 600; }
+
+/* buttons: mono, 6px radius, press feedback */
+.btn { font-family: var(--mono); font-size: 0.9375rem; font-weight: 500; border-radius: 6px; position: relative; isolation: isolate; background: transparent !important;
+  transition: color 250ms var(--ease); }
+.btn::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; transition: transform 250ms var(--ease), background-color 250ms var(--ease); }
+.btn:hover::before { transform: scale(0.98); }
+.btn:active::before { transform: scale(0.95); }
+.btn-ink { color: var(--on-action); } .btn-ink::before { background: var(--forest); } .btn-ink:hover { color: var(--lemon); }
+.btn-line { color: var(--ink); box-shadow: none; } .btn-line::before { box-shadow: inset 0 0 0 1.5px var(--forest); background: transparent; } .btn-line:hover::before { background: var(--paper); }
+.btn-paper { color: var(--ink) !important; } .btn-paper::before { background: var(--lemon); } .btn-paper:hover::before { background: #c4f290; }
+.btn-line-inverse { box-shadow: none; } .btn-line-inverse::before { box-shadow: inset 0 0 0 1.5px var(--on-inverse); } .btn-line-inverse:hover::before { background: rgba(255,255,255,.08); }
+.check-row { box-shadow: 0 0 0 1.5px var(--forest); border-radius: 8px; overflow: hidden; }
+.check-row .btn { border-radius: 0; }
+.text-link::before { content: "▸ "; }
+
+/* hero: sage panel with cut corners */
+.hero { box-shadow: none; background: var(--paper); margin: 0 32px; clip-path: var(--cut); }
+.site-head, .parts-bar { background: #fff; }
+.brand { font-family: var(--display); }
+
+/* portraits: round, no tile */
+img[src$=".png"][src*="/assets/"] { border-radius: 50%; background: none !important; object-fit: cover; aspect-ratio: 1 / 1; }
+
+/* grades: A is lemongrass, others outlined */
+.pgrade, .grade-big { box-shadow: inset 0 0 0 1.5px var(--forest) !important; border-radius: 6px; font-family: var(--display); }
+.pgrade.a, .grade-big.a, .preview-grade { background: var(--lemon) !important; color: var(--ink) !important; box-shadow: none !important; }
+.preview-grade { border-radius: 8px; }
+.badge { background: var(--lemon) !important; color: var(--ink) !important; font-family: var(--mono) !important; font-size: .75rem !important; letter-spacing: .08em; text-transform: uppercase; border-radius: 4px; }
+.preview-tag { color: var(--olive) !important; box-shadow: inset 0 0 0 1px var(--olive) !important; font-family: var(--mono) !important; font-size: .75rem !important; letter-spacing: .08em; text-transform: uppercase; border-radius: 4px; }
+
+/* cards */
+.person, .r-person, .plan, .visit, .way, .keep > div, .serves, .compare, .wire2, .browser { border-radius: 8px; overflow: hidden; }
+.wire { border-radius: 8px; }
+.person.top, .r-person.top, .visit.top, .plan.rec { box-shadow: 0 0 0 2px var(--forest), 0 30px 54px -30px rgba(9,15,5,.45) !important; }
+.plan.rec::before { background: var(--lemon); }
+.visit-side, .fix, .gap-note, .r-fiction, .compare thead th, .compare-borrow { background: var(--paper) !important; }
+.quote { border-left-color: var(--lemon) !important; border-left-width: 4px !important; }
+.mark.yes svg { background: var(--forest); border-radius: 3px; }
+.mlist .sev.bug { background: var(--forest) !important; color: var(--lemon) !important; }
+.steps .num { border-radius: 8px; background: var(--forest); color: var(--lemon); font-family: var(--mono); }
+.steps::before { border-top-style: dashed; border-color: var(--olive); }
+.parts-nav a { font-family: var(--mono); font-size: .8125rem !important; letter-spacing: .06em; text-transform: uppercase; border-radius: 6px; transition: box-shadow 250ms var(--ease), background-color 250ms var(--ease); }
+.parts-nav a[aria-current="true"] { background: var(--forest); color: var(--lemon); }
+
+/* verdict: forest band, lemongrass figures */
+.verdict { background: var(--forest) !important; border-radius: 8px; }
+.verdict p { color: #E3ECD8 !important; font-family: var(--read) !important; }
+.verdict .counts { color: #CBD8BC !important; border-color: #33461f !important; }
+.verdict .counts b, .figures dd { color: var(--lemon); font-family: var(--display); font-variant-numeric: tabular-nums; }
+.figures dd { color: var(--ink); }
+
+/* report page: sheet on a sage desk */
+main:has(> .sheet) { background: var(--paper) !important; }
+.sheet { border-radius: 4px; box-shadow: 0 0 0 1px var(--hair), 0 2px 4px rgba(9,15,5,.05), 0 24px 50px -20px rgba(9,15,5,.22), 0 60px 100px -40px rgba(9,15,5,.3) !important; }
+.sheet .band { border-top-color: var(--hair); }
+.r-person .pfoot { background: var(--paper); }
+
+/* closing band */
+.closing { background: var(--forest); }
+.closing h2 span:last-child { color: var(--lemon); }
+
+/* ---------- motion (only when JS is on and motion is welcome) ---------- */
+.motion .reveal { opacity: 0; transform: translateY(40px); transition: opacity 600ms var(--ease), transform 800ms cubic-bezier(0.16, 1, 0.3, 1); transition-delay: var(--d, 0ms); }
+.motion .reveal.in { opacity: 1; transform: none; }
+.motion .hero h1 span, .motion .r-hero h1 span { opacity: 0; transform: translateY(24px); animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.motion .hero h1 span:nth-child(2), .motion .r-hero h1 span:nth-child(2) { animation-delay: 120ms; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.lift-hover { transition: transform 300ms var(--ease), box-shadow 300ms var(--ease); }
+.lift-hover:hover { transform: translateY(-4px); }
+.motion .pgrade, .motion .grade-big { transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.motion .reveal:not(.in) .pgrade, .motion .reveal:not(.in) .grade-big { transform: scale(.6); }
+.quote { transition: border-left-color 300ms var(--ease); }
+@media (prefers-reduced-motion: reduce) {
+  .motion .reveal, .motion .hero h1 span, .motion .r-hero h1 span { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
+  .btn::before, .lift-hover { transition: none !important; }
+  .lift-hover:hover { transform: none; }
+}
+
+@media print { .motion .reveal, .motion .hero h1 span, .motion .r-hero h1 span { opacity: 1 !important; transform: none !important; animation: none !important; } .hero { clip-path: none; } }
