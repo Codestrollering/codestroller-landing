@@ -8,7 +8,7 @@
 <link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <style>
   .r-hero { padding: 72px 0 64px; box-shadow: inset 0 14px 18px -14px rgba(28,27,24,.22); }
@@ -321,34 +321,42 @@
   <div class="wrap">
     <span class="r-kicker">Part 3</span>
     <h2 id="wf-title"><span>Wireframes of</span><span>a better site</span></h2>
-    <p class="part-intro">Pages laid out again around the customers who struggled, using only facts already on Larkspur &amp; Fern’s site. Outlined in black: what’s new.</p>
+    <p class="part-intro">Pages laid out again around the customers who struggled, using only facts already on Larkspur &amp; Fern’s site. Outlined in teal: what’s new.</p>
 
-    <div class="frames">
+    <div class="frames mk-frames">
       <div class="frame">
         <h3>Home</h3>
-        <p class="purpose">A fast, trustworthy snapshot of the shop’s story, location and hours, so first-time visitors feel confident stopping by.</p>
-        <div class="wire2" role="img" aria-label="Wireframe of the Larkspur and Fern home page: a hero with a Shop now button, a favourites grid of three bouquets, a weddings teaser, and a neighbourhood story block that now includes hours and a directions link, then a footer.">
-          <div class="top"><span style="width:140px;height:14px;background:#393939"></span><span style="display:flex;gap:10px"><span class="bar" style="width:40px"></span><span class="bar" style="width:40px"></span><span class="bar" style="width:40px"></span><span class="bar" style="width:40px"></span></span></div>
-          <div class="photo"><span>[hero photo · tagline · Shop now]</span></div>
-          <div class="box"><b>Favourites</b><div class="tri"><div></div><div></div><div></div></div></div>
-          <div class="box"><b>Weddings &amp; Events</b><span class="bar"></span><span class="bar" style="width:60%"></span></div>
-          <div class="box new"><span class="tag">New</span><b>Our story · since 2014 · 41 Hollis Street</b><b>Open today · hours · directions</b><span class="bar"></span><span class="bar" style="width:70%"></span></div>
-          <div class="box"><b>Footer · address · phone · email</b></div>
-        </div>
-        <div class="serves"><img src="/assets/maya.png" alt="" width="72" height="72"><span><b>For Maya:</b> the story block keeps the founding story and address, and now shows the hours and a directions link, so she doesn’t have to hunt through other pages.</span></div>
+        <p class="purpose">A fast, trustworthy snapshot of the shop’s story, location and hours, with prices and the same-day cutoff where people choose.</p>
+        <div role="img" aria-label="Larkspur and Fern's Home page, redesigned: today's hours, the same-day cutoff, bouquets with prices and Add to cart, delivery cost and area, and the shop's story with directions. New parts are outlined in teal."><div class="mk"><div class="mk-info"><span>Open Mon–Fri 9am–6pm · Sat 9am–5pm · Sun closed</span><span>41 Hollis Street, Ashby Heights</span><span>(718) 555-0147</span></div><div class="mk-nav"><span class="mk-logo">Larkspur &amp; Fern</span><span class="mk-links"><span>Shop</span><span>Weddings &amp; Events</span><span>About</span><span>Contact</span><span>Cart (1)</span></span></div>
+<div class="mk-hero"><div><h4 class="big">Ashby Heights’ neighbourhood florist since 2014</h4><p class="mk-lede">Hand-tied bouquets, seasonal stems and floral design, made in our little shop on Hollis Street.</p>
+<span class="mk-chip mk-new"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Order by 1pm for same-day delivery, Mon–Sat<span class="newtag">NEW</span></span>
+<div class="mk-btns"><span class="mk-btn">Shop bouquets</span><span class="mk-btn ghost">Plan a wedding</span></div></div>
+<div class="mk-photo">[Photo: the shop window on Hollis Street]</div></div>
+<div class="mk-sec"><h5>Order for today<span class="newtag">NEW</span></h5><p class="mk-small">Prices shown up front. Choose a size and delivery date on the next page.</p>
+<div class="mk-cards"><div class="mk-card"><span class="ph">[Bouquet photo]</span><b>Seasonal Market Bouquet</b><span class="price">From $55</span><span class="mk-btn">Add to cart</span></div>
+<div class="mk-card"><span class="ph">[Bouquet photo]</span><b>Peony Garden</b><span class="price">From $85</span><span class="mk-btn">Add to cart</span></div>
+<div class="mk-card"><span class="ph">[Arrangement photo]</span><b>Sympathy Lilies</b><span class="price">Call to order</span><span class="mk-btn ghost">(718) 555-0147</span></div></div></div>
+<div class="mk-sec alt mk-new"><div class="mk-strip"><div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="1.8"/><circle cx="17" cy="17" r="1.8"/></svg><span><b>Same-day before 1pm</b>Monday to Saturday</span></div><div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg><span><b>$15 delivery</b>Ashby Heights, Millbrook, Riverside Park, Old Town</span></div><div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 19c0-8 6-13 14-13 0 8-5 14-13 14"/><path d="M5 19l7-7"/></svg><span><b>Or pick up in the shop</b>During opening hours</span></div></div></div>
+<div class="mk-sec"><div class="mk-story"><div><h5>A neighbourhood florist</h5><p class="mk-lede" style="margin-top:4px">Since 2014 we’ve arranged flowers on Hollis Street for birthdays, anniversaries, sympathy and every day in between. We buy from local growers whenever we can and deliver in our little green van.</p><p style="margin-top:8px"><span class="mk-link">Read our story</span></p></div>
+<div class="mk-hours mk-new"><b>Come say hello<span class="newtag">NEW</span></b>41 Hollis Street, Ashby Heights<br>Mon–Fri 9am–6pm · Sat 9am–5pm · Sun closed<br><span class="mk-link">Get directions</span></div></div></div>
+<div class="mk-foot"><div><b>Visit</b>41 Hollis Street<br>Ashby Heights</div><div><b>Call or email</b>(718) 555-0147<br>hello@larkspurandfern.example</div><div><b>Hours</b>Mon–Fri 9am–6pm · Sat 9am–5pm<br>Sunday closed</div></div></div></div>
+        <div class="serves"><img src="/assets/maya.png" alt="" width="72" height="72"><span><b>For Maya and Derek:</b> hours and directions on the home page, prices and the 1pm cutoff where people choose, and a cart that counts what’s in it.</span></div>
       </div>
-
       <div class="frame">
         <h3>Weddings &amp; Events</h3>
         <p class="purpose">Help a couple gauge rough cost and next steps for wedding flowers, without waiting on an email reply.</p>
-        <div class="wire2" role="img" aria-label="Wireframe of the Weddings and Events page: an introduction to personalised wedding and event work, a new starting-price block, a new wedding inquiry form asking date, venue, colours, guest count and budget with a reply-time note, and contact details.">
-          <div class="top"><span style="width:140px;height:14px;background:#393939"></span><span style="display:flex;gap:10px"><span class="bar" style="width:40px"></span><span class="bar" style="width:40px"></span><span class="bar" style="width:40px"></span><span class="bar" style="width:40px"></span></span></div>
-          <div class="box"><b>Bouquets, boutonnieres, arches, centrepieces · corporate events</b><span class="bar"></span><span class="bar" style="width:80%"></span></div>
-          <div class="box new"><span class="tag">New</span><b>Wedding flowers typically start from $ ___</b><span class="bar" style="width:70%"></span></div>
-          <div class="box new"><span class="tag">New</span><b>Tell us about your wedding</b><div class="fields"><span class="field">Date</span><span class="field">Venue</span><span class="field">Colours</span><span class="field">Guest count</span><span class="field">Budget</span><span class="field">Email</span></div><span class="btnw"></span><span style="font-size:0.8125rem;color:var(--muted)">We reply within ___ days</span></div>
-          <div class="box"><b>Prefer to talk? Phone · email</b></div>
-        </div>
-        <div class="serves"><img src="/assets/elena.png" alt="" width="72" height="72"><span><b>For Elena:</b> a starting price on the page itself, and a wedding inquiry form that replaces “email us”, giving her a concrete next step and a reply time.</span></div>
+        <div role="img" aria-label="Larkspur and Fern's Weddings and Events page, redesigned: a starting price, what they design, and a wedding enquiry form with a confirmation and a reply time. New parts are outlined in teal."><div class="mk"><div class="mk-info"><span>Open Mon–Fri 9am–6pm · Sat 9am–5pm · Sun closed</span><span>41 Hollis Street, Ashby Heights</span><span>(718) 555-0147</span></div><div class="mk-nav"><span class="mk-logo">Larkspur &amp; Fern</span><span class="mk-links"><span>Shop</span><span class="on">Weddings &amp; Events</span><span>About</span><span>Contact</span><span>Cart (1)</span></span></div>
+<div class="mk-hero"><div><h4 class="big">Wedding flowers that tell your story</h4><p class="mk-lede">Our designers work closely with every couple on bouquets, boutonnieres, ceremony arches and centrepieces that suit your style, season and venue.</p>
+<span class="mk-price mk-new">Weddings typically start from <b>$[YOUR PRICE]</b><span class="newtag">NEW</span></span>
+<div class="mk-btns"><span class="mk-btn">Tell us about your wedding</span><span class="mk-btn ghost">Call (718) 555-0147</span></div></div>
+<div class="mk-photo">[Photo: a past wedding the shop designed]</div></div>
+<div class="mk-sec"><h5>What we design</h5><p class="mk-small">Every wedding is different, so there are no set packages. We also design for corporate events, launches, dinners and parties.</p>
+<div class="mk-tiles"><div class="mk-tile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="9" r="2"/><path d="M12 7a2.5 2.5 0 1 1 2-3.5M14 9a2.5 2.5 0 1 1 3.5 2M12 11a2.5 2.5 0 1 1-2 3.5M10 9a2.5 2.5 0 1 1-3.5-2M12 11v10M12 17c2-2 4-2 5-2"/></svg>Bouquets</div><div class="mk-tile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="14" r="6"/><path d="M9 4h6l-3 4z"/></svg>Boutonnieres</div><div class="mk-tile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 21V11a7 7 0 0 1 14 0v10"/><path d="M3 21h18"/></svg>Ceremony arches</div><div class="mk-tile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h16M7 10v10M17 10v10"/><path d="M12 10V6M10 4h4"/></svg>Centrepieces</div></div></div>
+<div class="mk-sec alt"><h5>Tell us about your wedding<span class="newtag">NEW</span></h5><p class="mk-small">The details our designers ask for, in one place.</p>
+<div class="mk-form mk-new"><span class="mk-field">Wedding date<span></span></span><span class="mk-field">Venue<span></span></span><span class="mk-field">Colours<span></span></span><span class="mk-field">Guest count<span></span></span><span class="mk-field">Budget<span></span></span><span class="mk-field">Email<span></span></span><span class="mk-field wide">Inspiration you love<span></span></span>
+<div class="mk-formfoot"><span class="mk-btn">Send enquiry</span><span class="mk-small">You’ll see a confirmation straight away. A designer replies within [__] days.</span></div></div></div>
+<div class="mk-foot"><div><b>Visit</b>41 Hollis Street<br>Ashby Heights</div><div><b>Call or email</b>(718) 555-0147<br>hello@larkspurandfern.example</div><div><b>Hours</b>Mon–Fri 9am–6pm · Sat 9am–5pm<br>Sunday closed</div></div></div></div>
+        <div class="serves"><img src="/assets/elena.png" alt="" width="72" height="72"><span><b>For Elena:</b> a starting price on the page itself, and a wedding form that replaces “email us”, with a confirmation and a reply time.</span></div>
       </div>
     </div>
     <p class="gap-note">The blanks are left for the owner. Codestroller only uses facts it finds on the site, so it won’t invent Larkspur &amp; Fern’s prices or reply times.</p>
