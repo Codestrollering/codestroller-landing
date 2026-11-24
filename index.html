@@ -57,7 +57,7 @@
             <input id="site-url" name="url" type="text" inputmode="url" autocomplete="url" placeholder="yourshop.com" required>
             <button class="btn btn-ink" type="submit">Check my website</button>
           </div>
-          <p class="note">Results in about 15 minutes. Nothing on your site is changed, and there’s nothing to install. Works on any public website, including Shopify, Squarespace, Wix and WordPress.</p>
+          <p class="note">Your first stroll is free. Results in about 15 minutes. Nothing on your site is changed, and there’s nothing to install. Works on any public website, including Shopify, Squarespace, Wix and WordPress.</p>
           <a class="alt" href="/sample-report.html">Or see a sample report first</a>
         </form>
       </div>
@@ -244,7 +244,7 @@
           <div><h3>Studio</h3><p class="for">For agencies and people who look after many sites.</p></div>
           <div class="price"><b>Custom</b><span>priced per portfolio</span></div>
           <ul><li>Everything in Shop, for many sites</li><li>API and MCP access for your own tools</li><li>Developer view with tests to reproduce each issue</li></ul>
-          <a class="btn btn-line" href="#faq">Talk to us</a>
+          <a class="btn btn-line" href="#contact">Talk to us</a>
         </div>
       </div>
     </div>
@@ -268,6 +268,26 @@
     </div>
   </section>
 
+  <section class="band" id="contact" aria-labelledby="contact-title">
+    <div class="wrap contact-wrap">
+      <div>
+        <h2 id="contact-title"><span>Ask us</span><span>anything</span></h2>
+        <p class="contact-lede">Questions about a stroll, the AI agent check, or pricing for many sites? Write to us here and we’ll reply by email.</p>
+      </div>
+      <form class="contact-form" id="contactForm" novalidate>
+        <label for="c-name">Your name</label>
+        <input id="c-name" name="name" type="text" autocomplete="name">
+        <label for="c-email">Your email (so we can reply)</label>
+        <input id="c-email" name="email" type="email" autocomplete="email" required>
+        <label for="c-message">Your question</label>
+        <textarea id="c-message" name="message" rows="5" required></textarea>
+        <div class="hp" aria-hidden="true"><label for="c-website">Leave this empty</label><input id="c-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-ink" type="submit">Send message</button>
+        <p class="contact-status" id="contactStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
   <section class="closing" aria-labelledby="closing-title">
     <div class="wrap">
       <h2 id="closing-title"><span>Your customers are</span><span>already walking your site.</span></h2>
@@ -288,7 +308,7 @@
       </div>
       <nav class="foot-col" aria-label="Product"><strong>Product</strong><a href="#how">How a stroll works</a><a href="#pricing">Pricing</a><a href="/sample-report.html">Sample report</a><a href="https://app.codestroller.com/login.html">Sign in</a></nav>
       <nav class="foot-col" aria-label="For developers"><strong>For developers</strong><a href="https://app.codestroller.com/dashboard.html">Developer view</a><a href="https://app.codestroller.com/dashboard.html">API and MCP keys</a></nav>
-      <nav class="foot-col" aria-label="Help"><strong>Help</strong><a href="#faq">Questions</a><a href="https://app.codestroller.com/signup.html">Create an account</a></nav>
+      <nav class="foot-col" aria-label="Help"><strong>Help</strong><a href="#faq">Questions</a><a href="#contact">Contact us</a><a href="https://app.codestroller.com/signup.html">Create an account</a></nav>
     </div>
     <div class="foot-base">
       <span>© <span class="year">2026</span> Codestroller</span>
@@ -298,6 +318,29 @@
 </footer>
 
 <script>
+// "Ask us" form: sends to the Codestroller app, which emails the team.
+(function () {
+  var f = document.getElementById('contactForm');
+  if (!f) return;
+  var status = document.getElementById('contactStatus');
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = function (id) { return document.getElementById(id).value; };
+    var data = { name: v('c-name'), email: v('c-email'), message: v('c-message'), website: v('c-website'), page: location.href };
+    if (!data.email || !data.message.trim()) { status.textContent = 'Please add your email and your question.'; return; }
+    var btn = f.querySelector('button[type=submit]');
+    btn.disabled = true; status.textContent = 'Sending…';
+    fetch('https://app.codestroller.com/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) {
+        if (x.ok) { f.reset(); status.textContent = 'Thanks, your message is on its way. We’ll reply to ' + data.email + '.'; }
+        else { status.textContent = (x.j && x.j.error) || 'That didn’t send. Please try again.'; }
+      })
+      .catch(function () { status.textContent = 'That didn’t send. Please check your connection and try again.'; })
+      .finally(function () { btn.disabled = false; });
+  });
+})();
+
   // Narrow-screen menu.
   (function () {
     var head = document.querySelector('.site-head');

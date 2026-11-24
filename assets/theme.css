@@ -351,3 +351,15 @@ img[src$="/agent-ai.svg"] { border-radius: 50%; background: none !important; asp
   .mk-cards, .mk-tiles, .mk-form { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .mk-photo { height: 90px; }
 }
+
+/* ---- Ask us: contact form ---- */
+.contact-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 48px; align-items: start; }
+.contact-lede { font-size: 1.1875rem; color: var(--muted); margin: 16px 0 0; max-width: 32ch; }
+.contact-form { display: flex; flex-direction: column; gap: 8px; font-family: var(--display); }
+.contact-form label { font-weight: 600; font-size: 1rem; margin-top: 8px; }
+.contact-form input, .contact-form textarea { width: 100%; box-sizing: border-box; min-height: 48px; padding: 10px 14px; font: inherit; font-size: 1.0625rem; color: var(--ink); background: var(--page); border: 0; border-radius: 8px; box-shadow: 0 0 0 1.5px var(--forest, #1c1b18); }
+.contact-form textarea { min-height: 140px; resize: vertical; }
+.contact-form .btn { align-self: flex-start; margin-top: 14px; min-height: 52px; }
+.contact-status { min-height: 1.5em; margin: 6px 0 0; font-size: 1rem; }
+.contact-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+@media (max-width: 760px) { .contact-wrap { grid-template-columns: 1fr; gap: 20px; } }
