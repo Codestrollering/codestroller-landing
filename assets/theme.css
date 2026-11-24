@@ -268,10 +268,12 @@ img[src$="/agent-ai.svg"] { border-radius: 50%; background: none !important; asp
   .mk p { margin: 0; }
   .mk-lede { font-size: 11.5px; line-height: 1.5; margin-top: 8px !important; color: #2c3142; }
   .mk-small { font-size: 10px; color: #5b5f6b; line-height: 1.45; }
+  /* A blank the owner fills in, shown as a dashed field rather than bracket text. */
+  .mk-fill { font-family: inherit; font-size: inherit; font-style: italic; font-weight: 500; color: #5b3a2a; background: #fff6e8; border-bottom: 1.5px dashed #a2462b; padding: 0 4px; white-space: nowrap; }
   .mk-btns { display: flex; gap: 8px; margin-top: 12px; }
   .mk-btn { font-size: 10.5px; font-weight: 600; padding: 7px 12px; border-radius: 4px; background: #A2462B; color: #fff; }
   .mk-btn.ghost { background: #fff; color: #1F2433; box-shadow: inset 0 0 0 1px #1F2433; }
-  .mk-photo { height: 132px; border-radius: 8px; background: #DDD3BF; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #6b6555; text-align: center; padding: 10px; }
+  .mk-photo { height: 132px; border-radius: 8px; background: #DDD3BF; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #3f3a2c; text-align: center; padding: 10px; }
   .mk-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 10.5px; font-weight: 600; color: #1F2433; background: #fff; border-radius: 999px; padding: 4px 10px; box-shadow: inset 0 0 0 1px #E0D6C2; }
   .mk-chip svg { color: #A2462B; width: 14px; height: 14px; }
   .mk-sec { padding: 18px 22px; }
@@ -279,7 +281,7 @@ img[src$="/agent-ai.svg"] { border-radius: 50%; background: none !important; asp
   .mk h5 { margin: 0 0 3px; font-family: "Fraunces", Georgia, serif; font-size: 16px; font-weight: 600; }
   .mk-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
   .mk-card { background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px #E6DECD; padding: 10px; display: flex; flex-direction: column; gap: 5px; }
-  .mk-card .ph { height: 58px; border-radius: 5px; background: #EFE7D6; font-size: 9.5px; color: #7a735f; display: flex; align-items: center; justify-content: center; }
+  .mk-card .ph { height: 58px; border-radius: 5px; background: #EFE7D6; font-size: 9.5px; color: #4f4939; display: flex; align-items: center; justify-content: center; }
   .mk-card b { font-family: "Fraunces", Georgia, serif; font-size: 12px; font-weight: 600; }
   .mk-card .price { font-size: 10.5px; color: #2c3142; }
   .mk-card .mk-btn { align-self: flex-start; padding: 5px 10px; font-size: 10px; }
