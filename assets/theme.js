@@ -54,3 +54,13 @@ window.__stack = function (st, frontIdx) {
     window.addEventListener('load', function () { setTimeout(check, 600); });
   });
 })();
+
+// Header menu (narrow screens), shared by every page.
+(function () {
+  var head = document.querySelector('.site-head'), btn = head && head.querySelector('.menu-btn');
+  if (!btn) return;
+  function close() { head.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', function () { var open = head.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+  head.querySelectorAll('.nav a').forEach(function (a) { a.addEventListener('click', close); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && head.classList.contains('open')) { close(); btn.focus(); } });
+})();
