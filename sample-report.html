@@ -282,13 +282,13 @@
         <div class="visit-side"><span class="preview-tag">New · Agent check</span><div class="row"><img src="/assets/agent-ai.svg" alt="" width="72" height="72"><span class="grade-big f" aria-label="Grade F">F</span></div><strong>An AI agent</strong><span class="role">Shopping on someone’s behalf</span><span class="goal">Asked by its owner: “Send the Peony Garden to my wife today, and ask them about flowers for our daughter’s wedding.”</span><span class="steps-n">3 tasks · 1 finished</span></div>
         <div class="visit-main">
           <ol class="tasks">
-            <li class="ok"><span class="st">Finished</span><div><b>Find the price and the same-day cutoff</b><span>$85 for the Peony Garden; “before 1pm” inside a collapsed FAQ. An agent reads folded text that people skip, so this was easier for it than for Derek.</span></div></li>
-            <li class="fail"><span class="st">Stuck</span><div><b>Order the Peony Garden for delivery today</b><span>The cart held the $55 Seasonal Market Bouquet instead, and “Continue to payment” did nothing. A required “How did you hear about us?” also asked it to guess on its owner’s behalf.</span></div></li>
-            <li class="fail"><span class="st">Stuck</span><div><b>Send a wedding enquiry</b><span>“Send” on the contact form gave no confirmation, so the agent couldn’t tell its owner whether the message went.</span></div></li>
+            <li class="fail"><span class="st">Stuck</span><div><b>Find the price of the Peony Garden and the same-day cutoff</b><span>Going back to the home page and choosing “Shop now” on the Peony Garden led to a page that doesn’t exist. On the delivery page, the 1pm cutoff sits inside a collapsed answer, which an agent can’t open, so it never found it. It stalled at step 10.</span></div></li>
+            <li class="fail"><span class="st">Stuck</span><div><b>Order the Peony Garden for delivery today</b><span>It picked a date, wrote the card message and pressed “Add to cart”, but the cart showed the $55 Seasonal Market Bouquet instead of the Peony Garden. It stalled at step 5.</span></div></li>
+            <li class="ok"><span class="st">Finished</span><div><b>Send a wedding enquiry</b><span>It found the contact form, filled in a name, email and message, and stopped before “Send”, as the check always does.</span></div></li>
           </ol>
-          <div class="wf"><div><h4>Why it matters now</h4><ul><li>Phone and browser assistants are starting to shop and book for people. When one gets stuck, it just tries the next shop, and nobody tells you why.</li></ul></div><div><h4>Where it failed</h4><ul><li>Buttons that look like actions but don’t act.</li><li>No “order received” or “message sent” to confirm a result.</li><li>Prices, hours and the 1pm cutoff only in prose, with no structured data.</li></ul></div></div>
-          <p class="fix"><b>The fix:</b> make every button do what it says and confirm it on screen, carry the chosen bouquet into the cart, and publish prices, hours and the cutoff as structured data that agents can read.</p>
-          <p class="preview-note">Agent check is a preview of a new part of the report. This walk is reconstructed from the demo site’s own pages, not yet a recorded agent run.</p>
+          <div class="wf"><div><h4>Why it matters now</h4><ul><li>Phone and browser assistants are starting to shop and book for people. When one gets stuck, it just tries the next shop, and nobody tells you why.</li></ul></div><div><h4>Where it failed</h4><ul><li>A link that leads to a missing page, and a cart that holds the wrong bouquet.</li><li>The same-day cutoff hidden in collapsed text, which agents can’t open.</li><li>Six icon buttons and links with no name, and no structured data for the shop’s details or prices.</li></ul></div></div>
+          <p class="fix"><b>The fix:</b> fix the “Shop now” link and carry the chosen bouquet into the cart, put the 1pm cutoff where it’s visible, label the icon buttons, and publish the shop’s details and prices as structured data.</p>
+          <p class="preview-note">A recorded agent run on the demo shop, November 24, 2026. The agent never pays or sends anything.</p>
         </div>
       </article>
     </div>
@@ -374,7 +374,7 @@
 </section>
 </main>
 
-<footer class="site-foot"><div class="wrap"><div class="foot-base" style="margin-top:0"><span>© 2026 Codestroller</span><span>Larkspur &amp; Fern and Bloom Street Flowers are fictional demo shops.</span></div></div></footer>
+<footer class="site-foot"><div class="wrap"><div class="foot-base" style="margin-top:0"><span>© 2026 Noel Wiggins. All rights reserved.</span><span>Larkspur &amp; Fern and Bloom Street Flowers are fictional demo shops.</span></div></div></footer>
 <script>
 // Section tabs: once the report's own tab row scrolls away, a copy stays
 // pinned at the top, and the tab for the section on screen is highlighted.

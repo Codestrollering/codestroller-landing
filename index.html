@@ -49,15 +49,16 @@
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
       <div class="hero-text">
-        <h1 id="hero-title" class="rot"><span class="sr">See your site as your customers do, and those who send an AI assistant.</span><span class="rot-a" aria-hidden="true"><span>See your site</span><span>as your customers do<i class="rot-comma">,</i></span></span><span class="rot-b" aria-hidden="true"><span>And those who send</span><span>an AI assistant</span></span></h1>
+        <h1 id="hero-title" class="rot"><span class="sr">See your site the way your customers, and their AI assistants, do.</span><span class="rot-a" aria-hidden="true"><span>See your site</span><span>the way customers do<i class="rot-comma">,</i></span></span><span class="rot-b" aria-hidden="true"><span>and the way their</span><span>AI assistants do</span></span></h1>
         <p class="lede">Three of your likely customers — one of them the customer worth most to you — and an AI agent walk your website in real browsers. You get back an evaluation against what they expect, a graded report on where your site fails and succeeds for each of them, and a wireframe of a better site.</p>
         <form class="check" action="https://app.codestroller.com/stroll.html" method="get">
           <label for="site-url">Your website address</label>
           <div class="check-row">
             <input id="site-url" name="url" type="text" inputmode="url" autocomplete="url" placeholder="yourshop.com" required>
-            <button class="btn btn-ink" type="submit">Check my website</button>
+            <button class="btn btn-ink" type="submit">Check my website free</button>
           </div>
-          <p class="note">Your first stroll is free. Results in about 15 minutes. Nothing on your site is changed, and there’s nothing to install. Works on any public website, including Shopify, Squarespace, Wix and WordPress.</p>
+          <ul class="facts" aria-label="What to expect"><li>First stroll free</li><li>About 15 minutes</li><li>Nothing to install</li></ul>
+          <p class="note">Nothing on your site is changed. Works on any public website, including Shopify, Squarespace, Wix and WordPress.</p>
           <a class="alt" href="/sample-report.html">Or see a sample report first</a>
         </form>
       </div>
@@ -192,11 +193,11 @@
         <figure class="agent-log" aria-label="Example: an AI agent’s visit to Larkspur &amp; Fern">
           <div class="agent-log-head"><img src="/assets/agent-ai.svg" alt="" width="56" height="56"><div><span class="agent-log-k">Agent visit · Larkspur &amp; Fern</span><strong>Finished 1 of 3 tasks</strong></div><span class="pgrade f" aria-label="Grade F">F</span></div>
           <ol>
-            <li class="ok"><span class="st">Done</span><span>Find the price and the same-day cutoff</span></li>
+            <li><span class="st">Stuck</span><span>Find the same-day cutoff: hidden in collapsed text</span></li>
             <li><span class="st">Stuck</span><span>Order the Peony Garden: the cart held a different bouquet</span></li>
-            <li><span class="st">Stuck</span><span>Send a wedding enquiry: no confirmation that it went</span></li>
+            <li class="ok"><span class="st">Done</span><span>Fill in a wedding enquiry, up to “Send”</span></li>
           </ol>
-          <figcaption>From the sample report. The fix: buttons that do what they say, on-screen confirmations, and prices and hours an agent can read.</figcaption>
+          <figcaption>A recorded run from the sample report. The fix: links and carts that do what they say, key facts out in the open, and prices and hours an agent can read.</figcaption>
         </figure>
       </div>
       <ol class="agent-steps">
@@ -238,7 +239,8 @@
           <div><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><h3>Shop</h3><span class="rec-label">Recommended</span></div><p class="for">Keep walking your site as it changes.</p></div>
           <div class="price"><b>$49</b><span>a month</span></div>
           <ul><li>Everything in Try</li><li>Wireframe of a better site</li><li>Up to 4 competitors as your benchmark</li><li>Past strolls kept to track progress</li><li>AI agent check, re-run monthly</li></ul>
-          <a class="btn btn-ink" href="https://app.codestroller.com/signup.html">Choose Shop</a>
+          <a class="btn btn-ink" href="https://app.codestroller.com/stroll.html">Start with a free stroll</a>
+          <p class="plan-note">Payments are coming soon. Start with a free stroll and we’ll set up your monthly plan with you.</p>
         </div>
         <div class="plan">
           <div><h3>Studio</h3><p class="for">For agencies and people who look after many sites.</p></div>
@@ -262,7 +264,7 @@
         <details><summary>How are competitors chosen?</summary><p>Codestroller suggests similar businesses and opens each site to confirm it’s real. Suggestions can miss small local shops, so you can remove any and add the ones you actually compete with.</p></details>
         <details><summary>Do I need a developer?</summary><p>Not to run a stroll or read the results. To make the changes, hand the fix list and sketched pages to whoever looks after your site — they’re written for that.</p></details>
         <details><summary>Is the wireframe a finished website?</summary><p>No — it’s a plan: which pages to change, what goes where, and which customer each part is for. It’s built only from facts on your site, and anything missing, like a price or an event time, is marked for you to fill in.</p></details>
-        <details><summary>What is the AI agent check?</summary><p>An AI agent walks your site the way a shopping or booking assistant would, with tasks like finding a price, sending an enquiry or checking out. You get its grade, the step where it got stuck, and fixes that help agents and people alike. It’s new and in preview: the sample report shows what it looks like.</p></details>
+        <details><summary>What is the AI agent check?</summary><p>An AI agent walks your site the way a shopping or booking assistant would, with tasks like finding a price, sending an enquiry or checking out. You get its grade, the step where it got stuck, and fixes that help agents and people alike. It runs in every stroll, stops before paying or sending anything, and the sample report shows what it looks like.</p></details>
         <details><summary>How long does it take?</summary><p>About 30 seconds to meet your customers, then 10 to 15 minutes for the stroll itself. You can close the page while it runs; your results wait under Past strolls.</p></details>
       </div>
     </div>
@@ -311,7 +313,7 @@
       <nav class="foot-col" aria-label="Help"><strong>Help</strong><a href="#faq">Questions</a><a href="#contact">Contact us</a><a href="https://app.codestroller.com/signup.html">Create an account</a></nav>
     </div>
     <div class="foot-base">
-      <span>© <span class="year">2026</span> Codestroller</span>
+      <span>© <span class="year">2026</span> Noel Wiggins. All rights reserved.</span>
       <span>We visit sites the way a customer would, and never change them.</span>
     </div>
   </div>

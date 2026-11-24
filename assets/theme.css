@@ -363,3 +363,9 @@ img[src$="/agent-ai.svg"] { border-radius: 50%; background: none !important; asp
 .contact-status { min-height: 1.5em; margin: 6px 0 0; font-size: 1rem; }
 .contact-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 @media (max-width: 760px) { .contact-wrap { grid-template-columns: 1fr; gap: 20px; } }
+
+/* ---- hero facts and plan note ---- */
+.hero .facts { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; font-family: var(--display); font-size: 0.95rem; font-weight: 600; }
+.hero .facts li { padding: 6px 12px; border-radius: 999px; background: var(--paper, #f1f5ec); box-shadow: inset 0 0 0 1px var(--forest, #1c1b18); }
+.plan-note { margin: 8px 0 0; font-size: 0.95rem; color: var(--muted); font-family: var(--display); }
+@media (max-width: 480px) { .hero h1.rot .rot-a > span, .hero h1.rot .rot-b > span { white-space: normal; } }
