@@ -388,3 +388,30 @@ img[src$="/agent-ai.svg"] { border-radius: 50%; background: none !important; asp
 /* report: the part tabs are only report parts, with a label */
 .parts-k { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); align-self: center; margin-right: 4px; }
 .parts-bar .parts-k { display: none; }
+
+/* sample report: email before the PDF */
+.lead-dialog { width: min(480px, calc(100% - 32px)); padding: 0; border: 0; border-radius: 12px; background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--hair), 0 40px 80px -30px rgba(9,15,5,.5); }
+.lead-dialog::backdrop { background: rgba(9,15,5,.45); }
+.lead-form, .lead-done { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 32px; font-family: var(--read); }
+.lead-k { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--olive); }
+.lead-dialog h2 { margin: 2px 0 4px; font-family: var(--display); font-size: 1.75rem; font-weight: 560; letter-spacing: -0.02em; line-height: 1.15; outline: none; }
+.lead-intro, .lead-done p { margin: 0 0 10px; font-size: 1rem; line-height: 1.45; color: var(--text-2); }
+.lead-form label { font-family: var(--display); font-size: .9375rem; font-weight: 500; margin-top: 8px; }
+.lead-form .opt { font-weight: 400; color: var(--muted); }
+.lead-form input[type=email], .lead-form input[type=text] { min-height: 48px; padding: 0 14px; border: 0; border-radius: 6px; box-shadow: inset 0 0 0 1.5px #A9BE93; font: inherit; font-size: 1rem; color: var(--ink); background: #fff; }
+.lead-form input:focus-visible { outline: 3px solid var(--lemon); outline-offset: 1px; box-shadow: inset 0 0 0 1.5px var(--forest); }
+.lead-form input[aria-invalid=true] { box-shadow: inset 0 0 0 2px var(--fail, #C62F24); }
+.lead-hint { margin: 0; font-size: .875rem; color: var(--muted); }
+.lead-check { display: flex !important; align-items: center; gap: 10px; min-height: 44px; font-family: var(--read) !important; font-weight: 400 !important; font-size: .9375rem !important; cursor: pointer; }
+.lead-check input { width: 20px; height: 20px; accent-color: var(--forest); }
+.lead-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.lead-error { margin: 0; min-height: 0; font-size: .9375rem; color: var(--fail, #C62F24); }
+.lead-error:empty { display: none; }
+.lead-submit { margin-top: 10px; width: 100%; justify-content: center; }
+.lead-fine { margin: 4px 0 0; font-size: .8125rem; color: var(--muted); text-align: center; }
+.lead-close { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 6px; background: transparent; color: var(--ink); cursor: pointer; }
+.lead-close:hover { background: var(--paper); }
+.lead-done { align-items: flex-start; }
+.lead-done .btn { width: 100%; justify-content: center; }
+.lead-done a:not(.btn) { color: var(--forest); font-weight: 500; }
+.lead-form[hidden], .lead-done[hidden] { display: none !important; }

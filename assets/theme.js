@@ -64,3 +64,50 @@ window.__stack = function (st, frontIdx) {
   head.querySelectorAll('.nav a').forEach(function (a) { a.addEventListener('click', close); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && head.classList.contains('open')) { close(); btn.focus(); } });
 })();
+
+// Sample report PDF: ask for an email, then download. Without JS the link downloads directly.
+(function () {
+  var dlg = document.getElementById('leadDialog');
+  var trigger = document.querySelector('[data-lead-pdf]');
+  if (!dlg || !trigger || typeof dlg.showModal !== 'function') return;
+  var API = window.CS_API || 'https://app.codestroller.com';
+  var form = document.getElementById('leadForm'), done = document.getElementById('leadDone');
+  var err = document.getElementById('leadError'), msg = document.getElementById('leadDoneMsg');
+  var email = document.getElementById('lead-email');
+  function download() {
+    var a = document.createElement('a');
+    a.href = trigger.getAttribute('href'); a.download = trigger.getAttribute('download') || '';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function open(e) {
+    e.preventDefault();
+    form.hidden = false; done.hidden = true; err.textContent = '';
+    dlg.showModal(); email.focus();
+  }
+  trigger.addEventListener('click', open);
+  dlg.addEventListener('click', function (e) {
+    if (e.target === dlg || e.target.closest('[data-close]')) { dlg.close(); }
+  });
+  dlg.addEventListener('close', function () { trigger.focus(); });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { err.textContent = 'Please enter an email address we can send the report to.'; email.setAttribute('aria-invalid', 'true'); email.focus(); return; }
+    email.removeAttribute('aria-invalid'); err.textContent = '';
+    var btn = form.querySelector('.lead-submit'); btn.disabled = true; btn.textContent = 'Sending…';
+    var body = { email: v, website: document.getElementById('lead-site').value, consent: document.getElementById('lead-consent').checked, nickname: document.getElementById('lead-nick').value, page: location.href };
+    function finish(emailed) {
+      download();
+      msg.textContent = emailed ? 'We’ve also emailed the link to ' + v + '.' : 'If it doesn’t appear, use the link below.';
+      form.hidden = true; done.hidden = false; done.querySelector('h2').focus();
+      btn.disabled = false; btn.textContent = 'Get the report';
+    }
+    fetch(API + '/api/sample-report', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; }, function () { return { ok: r.ok, status: r.status, j: {} }; }); })
+      .then(function (x) {
+        if (x.status === 400) { err.textContent = (x.j && x.j.error) || 'Please check your email address.'; btn.disabled = false; btn.textContent = 'Get the report'; email.focus(); return; }
+        finish(!!(x.ok && x.j && x.j.emailed));
+      })
+      .catch(function () { finish(false); }); // never block the download on our side
+  });
+})();
