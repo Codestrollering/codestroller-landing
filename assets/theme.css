@@ -415,3 +415,21 @@ img[src$="/agent-ai.svg"] { border-radius: 50%; background: none !important; asp
 .lead-done .btn { width: 100%; justify-content: center; }
 .lead-done a:not(.btn) { color: var(--forest); font-weight: 500; }
 .lead-form[hidden], .lead-done[hidden] { display: none !important; }
+
+/* Larkspur & Fern branding in the sample report (from the demo shop's own look) */
+.r-client { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px 56px; align-items: center; }
+.r-client-text { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.lf-lockup { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lf-for { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-right: 6px; }
+.lf-lockup img { width: 40px; height: 40px; }
+.lf-name { font-family: "Cormorant Garamond", Georgia, serif; font-size: 1.875rem; font-weight: 600; color: #4b3a44; letter-spacing: .01em; line-height: 1; }
+.lf-shot { margin: 0; padding: 24px; border-radius: 12px; background: linear-gradient(125deg, #f3e6ea 0%, #f1ece6 55%, #e6eedf 100%); display: flex; flex-direction: column; gap: 12px; }
+.lf-browser { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px rgba(75,58,68,.12), 0 24px 44px -24px rgba(75,58,68,.45); }
+.lf-bar { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #fbf8f4; border-bottom: 1px solid #eee4e8; }
+.lf-bar i { width: 9px; height: 9px; border-radius: 50%; background: #dccfd5; }
+.lf-bar span { margin-left: 10px; font-family: var(--mono); font-size: .6875rem; color: #7a5c6e; letter-spacing: .04em; }
+.lf-browser img { display: block; width: 100%; height: auto; }
+.lf-shot figcaption { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: #7a5c6e; }
+.lf-foot { display: inline-flex; align-items: center; gap: 8px; }
+.lf-foot img { width: 22px; height: 22px; }
+@media (max-width: 860px) { .r-client { grid-template-columns: 1fr; } .lf-shot { padding: 16px; } }
